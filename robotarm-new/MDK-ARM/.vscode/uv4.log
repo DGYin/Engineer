@@ -1,0 +1,19 @@
+*** Using Compiler 'V6.18', folder: 'E:\Program Files\keil5\ARM\ARMCLANG\Bin'
+Build target 'robotarm'
+compiling tsk_config_and_callback.cpp...
+../User/Task/robotarm_task.cpp(212): warning: 4 enumeration values not handled in switch: 'DR16_Switch_Status_TRIG_UP_MIDDLE', 'DR16_Switch_Status_TRIG_MIDDLE_UP', 'DR16_Switch_Status_TRIG_MIDDLE_DOWN'... [-Wswitch]
+                                switch(DR16.Get_Right_Switch())
+                                       ^~~~~~~~~~~~~~~~~~~~~~~
+../User/Task/robotarm_task.cpp(237): warning: 4 enumeration values not handled in switch: 'DR16_Switch_Status_TRIG_UP_MIDDLE', 'DR16_Switch_Status_TRIG_MIDDLE_UP', 'DR16_Switch_Status_TRIG_MIDDLE_DOWN'... [-Wswitch]
+                                switch(DR16.Get_Right_Switch())
+                                       ^~~~~~~~~~~~~~~~~~~~~~~
+../User/Task/robotarm_task.cpp(208): warning: 4 enumeration values not handled in switch: 'DR16_Switch_Status_TRIG_UP_MIDDLE', 'DR16_Switch_Status_TRIG_MIDDLE_UP', 'DR16_Switch_Status_TRIG_MIDDLE_DOWN'... [-Wswitch]
+                switch(DR16.Get_Left_Switch())
+                       ^~~~~~~~~~~~~~~~~~~~~~
+3 warnings generated.
+compiling robotarm_task.cpp...
+linking...
+Program Size: Code=52560 RO-data=2720 RW-data=32 ZI-data=24832  
+FromELF: creating hex file...
+"robotarm\robotarm.axf" - 0 Error(s), 3 Warning(s).
+Build Time Elapsed:  00:00:01
