@@ -162,18 +162,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>298</LineNumber>
+          <LineNumber>184</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134239954</Address>
+          <Address>134246380</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\User\Task\tsk_config_and_callback.cpp</Filename>
+          <Filename>..\User\App\robotarm.cpp</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\robotarm\../User/Task/tsk_config_and_callback.cpp\298</Expression>
+          <Expression>\\robotarm\../User/App/robotarm.cpp\184</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -257,6 +257,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>jointQNow</ItemText>
         </Ww>
+        <Ww>
+          <count>16</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>targetHeight</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -279,13 +284,13 @@
       <DebugFlag>
         <trace>0</trace>
         <periodic>1</periodic>
-        <aLwin>1</aLwin>
+        <aLwin>0</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>
         <aPa>0</aPa>
         <viewmode>1</viewmode>
-        <vrSel>0</vrSel>
+        <vrSel>2</vrSel>
         <aSym>0</aSym>
         <aTbox>0</aTbox>
         <AscS1>0</AscS1>

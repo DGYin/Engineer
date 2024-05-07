@@ -24,6 +24,11 @@ typedef enum{
 	ROBOTARM_UNCALIBRATED	= 0x01U,
 } ROBOTARM_CALIBRATE_STATUS_T;
 
+typedef enum{
+	ROBOTARM_END_SMOOTHEN_LINEAR	= 0x00U,
+	
+} ROBOTARM_END_SMOOTHEN_TYPE_T;
+
 typedef struct{
 	float barJ1ToJ2_Si;
 	float barJ2ToJ3_Si;
@@ -75,8 +80,8 @@ class robotarm_c{
 		ROBOTARM_RETURN_T Robotarm_SetEndPosNRpyTarget(posMatrix_t posMat, RpyMatrix_t rpyMat);
 		ROBOTARM_RETURN_T Robotarm_DoJointControl();
 		// 获取姿态
-		ROBOTARM_RETURN_T Robotarm_GetEndPoseMatNow(tMatrix_t* endPoseMat);
-		ROBOTARM_RETURN_T Robotarm_GetEndPosNRpyNow(posNRpyMatrix_t* posNRpyMat);
+		ROBOTARM_RETURN_T Robotarm_GetEndPoseMatNow(tMatrix_t endPoseMat);
+		ROBOTARM_RETURN_T Robotarm_GetEndPosNRpyNow(posNRpyMatrix_t posNRpyMat);
 		// 校正相关
 		ROBOTARM_RETURN_T Robotarm_CheckforCalibration();
 		// 运动学相关

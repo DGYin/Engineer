@@ -257,12 +257,14 @@ void RobotarmResolution_Task(void const * argument)
 	while(1)
 	{
 		posNRpyMatrix_t endPosNRpyNow;
-		robotarm.Robotarm_GetEndPosNRpyNow(&endPosNRpyNow);
-		robotarm.Robotarm_SetEndPosNRpyTarget(posMat, rpyMat);	// 设置末端位姿
-		robotarm.Robotarm_QNowUpdate();						// 更新当前Q矩阵
-		robotarm.Robotarm_IKine();							// 逆运动学
+		robotarm.Robotarm_GetEndPosNRpyNow(endPosNRpyNow);		// 获得当前末端位姿 （rpy型）
+		robotarm.Robotarm_SetEndPosNRpyTarget(posMat, rpyMat);	// 设置末端位姿 （rpy型）
+		robotarm.Robotarm_QNowUpdate();							// 更新当前Q矩阵
+		robotarm.Robotarm_IKine();								// 逆运动学
 		//Robotarm.Robotarm_Resolution.Reload_Task_Status_PeriodElapsedCallback();
-		osDelay(25);
+		extern osThreadId RobotarmTaskHandle;
+		UBaseType_t remaining = uxTaskGetStackHighWaterMark((TaskHandle_t)RobotarmTaskHandle);
+		osDelay(35);
 	}
 }
 
@@ -295,6 +297,8 @@ void Motor_Task(void const * argument)
 //		{
 //			Task_CAN_PeriodElapsedCallback();
 //		}
+		extern osThreadId MotorTaskHandle;
+		UBaseType_t remaining = uxTaskGetStackHighWaterMark(MotorTaskHandle);
 		osDelay(5);
 	}
 }

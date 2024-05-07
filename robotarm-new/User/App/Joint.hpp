@@ -77,7 +77,7 @@ class prismaticJoint_c{	// 关节的所有位移都为 m
 		// 进行关节校准相关
 		JOINT_RETURN_T jointCaliInit(	float velocity=0.1f,
 										float acceleration=0.005f,
-										uint8_t afLength=20,
+										uint8_t afLength=200,
 										float tole=1.f,
 										JOINT_PRISMATIC_CALI_DIRECTION_T __caliDir=JOINT_CALI_DIRECTION_BACKWARD);
 		float calibratedDisplacementSi;		// 完成校准后输出的位移，用于矫正零点
@@ -124,7 +124,7 @@ class revoluteJoint_c{	// 关节的所有角度都为弧度
 		float mechLimitMarginRad;	// 给关节机械限位留裕量，防止直接打到限位上
 		// 进行关节校准相关
 		JOINT_RETURN_T jointCaliInit(	float omege=1.f,
-										float delPos=0.2f,
+										float delPos=0.1f,
 										uint8_t afLength=40,
 										float tole=0.012f,
 										JOINT_REVOLUTE_CALIBRATION_DIRECTION_T __caliDir=JOINT_CALI_DIRECTION_CCW);

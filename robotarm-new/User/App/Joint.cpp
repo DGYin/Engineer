@@ -423,7 +423,7 @@ float revoluteJoint_c::getBodyFrameJointAngle()
 			ret = ret - calibratedPositionRad + ccwMechLimitRad;
 			break;
 		case JOINT_CALI_DIRECTION_CW:
-			ret = ret - calibratedPositionRad + cwMechLimitRad;
+			ret = ret + calibratedPositionRad + cwMechLimitRad;
 			break;
 		default:
 			return ret = 0;

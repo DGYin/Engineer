@@ -37,22 +37,24 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_QNowUpdate()
 	jointQNow[4-1] = revJoint4.getBodyFrameJointAngle();
 	jointQNow[5-1] = revJoint5.getBodyFrameJointAngle();
 	jointQNow[6-1] = revJoint6.getBodyFrameJointAngle();
+	
+	jointQNow[4] = 0; jointQNow[5] = 0;
 	return ret;
 }
 
-float targetHeight = 0.04f;
+float targetHeight = 0.1f;
 float nowHeight;
 ROBOTARM_RETURN_T robotarm_c::Robotarm_DoJointControl()
 {
 	ROBOTARM_RETURN_T ret = ROBOTARM_OK;
 	if (armCalibrated == ROBOTARM_CALIBRATED)	// 完成校准后，关节才受这里的控制
 	{
-		priJoint1.setBodyFrameJointDisplacement(jointQTarget[1-1]);
+//		priJoint1.setBodyFrameJointDisplacement(targetHeight);
 		revJoint2.setBodyFrameJointAngle(jointQTarget[2-1]);
 		revJoint3.setBodyFrameJointAngle(jointQTarget[3-1]);
 		revJoint4.setBodyFrameJointAngle(jointQTarget[4-1]);
-		revJoint5.setBodyFrameJointAngle(0);	
-		revJoint6.setBodyFrameJointAngle(0);
+//		revJoint5.setBodyFrameJointAngle(0);	
+//		revJoint6.setBodyFrameJointAngle(0);
 	}
 	else return ret = ROBOTARM_ERROR;	// 还没校准好，返回错误
 	return ret;
@@ -93,7 +95,7 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_SetEndPosNRpyTarget(posMatrix_t posMat, R
 	return ret;
 }
 
-ROBOTARM_RETURN_T robotarm_c::Robotarm_GetEndPosNRpyNow(posNRpyMatrix_t* posNRpyMat)
+ROBOTARM_RETURN_T robotarm_c::Robotarm_GetEndPosNRpyNow(posNRpyMatrix_t posNRpyMat)
 {
 	ROBOTARM_RETURN_T ret = ROBOTARM_OK;
 	Matrixf<4, 4> transMat;
@@ -102,6 +104,15 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_GetEndPosNRpyNow(posNRpyMatrix_t* posNRpy
 			transMat[i][j] = endPoseMatNow[i*4+j];
 	Matrixf<3, 1> posMat = robotics::t2p(transMat);
 	Matrixf<3, 1> rpyMat = robotics::t2rpy(transMat);
+	
+//	float rpy[3] = {
+//      atan2f(R[1][0], R[0][0]),                                        // yaw
+//      atan2f(-R[2][0], sqrtf(R[2][1] * R[2][1] + R[2][2] * R[2][2])),  // pitch
+//      atan2f(R[2][1], R[2][2])                                         // roll
+//  };
+
+	
+	
 	for (int i=0; i<3; i++)
 	{
 		memcpy(&posNRpyMat[i],		&posMat[i][0], sizeof(float));
@@ -110,7 +121,7 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_GetEndPosNRpyNow(posNRpyMatrix_t* posNRpy
 	return ret;
 }
 
-ROBOTARM_RETURN_T robotarm_c::Robotarm_GetEndPoseMatNow(tMatrix_t* endPoseMat)
+ROBOTARM_RETURN_T robotarm_c::Robotarm_GetEndPoseMatNow(tMatrix_t endPoseMat)
 {
 	ROBOTARM_RETURN_T ret = ROBOTARM_OK;
 	memcpy(&endPoseMat, &endPoseMatNow, 16*sizeof(float));
@@ -136,6 +147,7 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_FKine()
     links[5] = robotics::Link(0, 0,		0,		0,		robotics::R, PI/2,	0, 0);
     robotics::Serial_Link<6> scara(links);
 	// 正解算
+	
 	Matrixf<4, 4> tFKine = scara.fkine(jointQNow);
 	// 结果拷贝出来
 	for (int i=0; i<4; i++)
@@ -151,25 +163,31 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_FKine()
  */
 ROBOTARM_RETURN_T robotarm_c::Robotarm_IKine()
 {
-	// 设定参数
-	robotics::Link links[6];
-	// 上交用的是 SDH 法，请注意参数不同于 MDH
-    links[0] = robotics::Link(0, 0,		81,		0,		robotics::P, 0, 	0, 0);
-    links[1] = robotics::Link(0, 48.6,	213.38,	0,		robotics::R, 0, 	0, 0);
-    links[2] = robotics::Link(0, 48.6,	225.26,	0,		robotics::R, 0, 	0, 0);
-    links[3] = robotics::Link(0, 30.25,		0,	PI/2,	robotics::R, PI/2, 	0, 0);
-    links[4] = robotics::Link(0, 226,	0,		PI/2,	robotics::R, PI/2, 	0, 0);
-    links[5] = robotics::Link(0, 0,		0,		0,		robotics::R, PI/2,	0, 0);
-    robotics::Serial_Link<6> scara(links);
-	// 迭代法逆解算
-	Matrixf<4, 4> tIKine;
-	for (int i=0; i<4; i++)
-		for (int j=0; j<4; j++)
-			tIKine[i][j] = endPoseMatTarget[i*4+j];
-    Matrixf<6, 1> qIKine = scara.ikine(tIKine, Matrixf<6, 1>(jointQNow));
-	for (int i=0; i<6; i++)
-		memcpy(&jointQTarget[i], qIKine[i], sizeof(float));
-	return ROBOTARM_OK;
+	if (armCalibrated == ROBOTARM_CALIBRATED)	// 完成校准后，才进行解算
+	{
+		// 设定参数
+		robotics::Link links[6];
+		// 上交用的是 SDH 法，请注意参数不同于 MDH
+		links[0] = robotics::Link(0, 0,		81,		0,		robotics::P, 0, 	0, 0);
+		links[1] = robotics::Link(0, 48.6,	213.38,	0,		robotics::R, 0, 	0, 0);
+		links[2] = robotics::Link(0, 48.6,	225.26,	0,		robotics::R, 0, 	0, 0);
+		links[3] = robotics::Link(0, 30.25,		0,	PI/2,	robotics::R, PI/2, 	0, 0);
+		links[4] = robotics::Link(0, 226,	0,		PI/2,	robotics::R, PI/2, 	0, 0);
+		links[5] = robotics::Link(0, 0,		0,		0,		robotics::R, PI/2,	0, 0);
+		robotics::Serial_Link<6> scara(links);
+		// 迭代法逆解算
+		Matrixf<4, 4> tIKine;
+		for (int i=0; i<4; i++)
+			for (int j=0; j<4; j++)
+				tIKine[i][j] = endPoseMatTarget[i*4+j];
+		
+		Matrixf<6, 1> qIKine = scara.ikine(tIKine, Matrixf<6, 1>(jointQNow));
+		// 结果输出
+		for (int i=0; i<6; i++)
+			memcpy(&jointQTarget[i], qIKine[i], sizeof(float));
+		return ROBOTARM_OK;
+	}
+	return ROBOTARM_ERROR;	// 还没完成校准，返回错误
 }
 
 
@@ -180,12 +198,12 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_CheckforCalibration()
 	uint8_t caliStatus = 0;
 	if (armCalibrated == ROBOTARM_UNCALIBRATED)
 	{
-		caliStatus |= priJoint1.jointDoCalibrate(JOINT_CALI_DIRECTION_BACKWARD);
+//		caliStatus |= priJoint1.jointDoCalibrate(JOINT_CALI_DIRECTION_BACKWARD);
 		caliStatus |= revJoint2.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
 		caliStatus |= revJoint3.jointDoCalibrate(JOINT_CALI_DIRECTION_CW);
 		caliStatus |= revJoint4.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
-		caliStatus |= revJoint5.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
-		caliStatus |= revJoint6.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
+//		caliStatus |= revJoint5.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
+//		caliStatus |= revJoint6.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
 		armCalibrated = (ROBOTARM_CALIBRATE_STATUS_T) caliStatus;
 	}
 	
