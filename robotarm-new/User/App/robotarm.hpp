@@ -53,22 +53,30 @@ typedef struct{
 
 
 
-typedef float qMatrix_t[6];
-typedef float tMatrix_t[16];
+typedef float qMatrix_t[6];			// q matrix
+typedef float tMatrix_t[16];		// homogenius transformation matrix
+typedef float posMatrix_t[3];		// [x, y, z] in mm
+typedef float RpyMatrix_t[3];		// [r, p, y] in rad
+typedef float posNRpyMatrix_t[6];	// [x, y, z, r, p, y] in mm or rad
 
 class robotarm_c{
 	public:
 		// 初始化
 		ROBOTARM_RETURN_T Robotarm_Init();
 		// 关节设置
-		revoluteJoint_c revjoint2;
-		revoluteJoint_c revjoint3;
-		revoluteJoint_c revjoint4;
-		revoluteJoint_c revjoint5;
-		revoluteJoint_c revjoint6;
+		prismaticJoint_c	priJoint1;
+		revoluteJoint_c		revJoint2;
+		revoluteJoint_c		revJoint3;
+		revoluteJoint_c		revJoint4;
+		revoluteJoint_c		revJoint5;
+		revoluteJoint_c		revJoint6;
 		// 控制相关
 		ROBOTARM_RETURN_T Robotarm_SetEndPoseMat(tMatrix_t endPoseMat);
+		ROBOTARM_RETURN_T Robotarm_SetEndPosNRpyTarget(posMatrix_t posMat, RpyMatrix_t rpyMat);
 		ROBOTARM_RETURN_T Robotarm_DoJointControl();
+		// 获取姿态
+		ROBOTARM_RETURN_T Robotarm_GetEndPoseMatNow(tMatrix_t* endPoseMat);
+		ROBOTARM_RETURN_T Robotarm_GetEndPosNRpyNow(posNRpyMatrix_t* posNRpyMat);
 		// 校正相关
 		ROBOTARM_RETURN_T Robotarm_CheckforCalibration();
 		// 运动学相关

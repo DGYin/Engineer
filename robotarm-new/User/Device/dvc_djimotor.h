@@ -324,7 +324,7 @@ protected:
     //发送缓存区
     uint8_t *CAN_Tx_Data;
     //减速比, 默认带减速箱
-    float Gearbox_Rate;
+    float Gearbox_Rate = 3591.f/187.f;
     //最大扭矩, 需根据不同负载测量后赋值, 也就开环和扭矩环输出用得到, 不过我感觉应该没有奇葩喜欢开环输出这玩意
     float Torque_Max;
 
@@ -334,7 +334,7 @@ protected:
     uint16_t Encoder_Num_Per_Round = 8192;
     //最大输出扭矩
     uint16_t Output_Max = 16384;
-
+	float torqueCoef	= 0.3;
     //内部变量
 
     //当前时刻的电机接收flag
@@ -541,7 +541,7 @@ void Class_DJI_Motor_GM6020::Set_Out(float __Out)
  */
 uint16_t Class_DJI_Motor_C610::Get_Output_Max()
 {
-    return (Output_Max);
+    return (Output_Max/10000.f*10.f*0.18f);
 }
 
 /**
@@ -741,7 +741,7 @@ float Class_DJI_Motor_C620::Get_Now_Omega()
  */
 float Class_DJI_Motor_C620::Get_Now_Torque()
 {
-    return (Data.Now_Torque);
+    return (Data.Now_Torque/16384.f*20.f * torqueCoef);
 }
 
 /**
@@ -854,6 +854,11 @@ void Class_DJI_Motor_C620::Set_Out(float __Out)
     Out = __Out;
 }
 
+
+
+void DjiMotor_Init(void);
+extern Class_DJI_Motor_C620 m3508_joint1, m3508_joint5;
+extern Class_DJI_Motor_C610 m2006_joint6;
 #endif
 
 /************************ COPYRIGHT(C) USTC-ROBOWALKER **************************/

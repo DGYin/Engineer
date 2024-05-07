@@ -40,17 +40,15 @@
 #include "tsk_config_and_callback.h"
 
 /* Private macros ------------------------------------------------------------*/
-#include "robotarm_task.h"
 // Just for test
 #include "Joint.hpp"
-#include "icac.h"
 #include "robotarm.hpp"
+#include "drv_uart.h"
 /* Private types -------------------------------------------------------------*/
 
 /* Private variables ---------------------------------------------------------*/
 
 /* Private function declarations ---------------------------------------------*/
-extern Class_Robotarm Robotarm;
 extern osSemaphoreId Communication_SemHandle;
 /* Function prototypes -------------------------------------------------------*/
 
@@ -64,7 +62,7 @@ extern osSemaphoreId Communication_SemHandle;
  */
 void DR16_UART3_Callback(uint8_t *Buffer, uint16_t Length)
 {
-    Robotarm.DR16.UART_RxCpltCallback(Buffer);
+    //Robotarm.DR16.UART_RxCpltCallback(Buffer);
 }
 
 /**
@@ -75,7 +73,7 @@ void DR16_UART3_Callback(uint8_t *Buffer, uint16_t Length)
  */
 void Referee_UART6_Callback(uint8_t *Buffer, uint16_t Length)
 {
-    Robotarm.Referee.UART_RxCpltCallback(Buffer);
+    //Robotarm.Referee.UART_RxCpltCallback(Buffer);
 }
 
 /**************************************************************************
@@ -141,25 +139,6 @@ void Device_CAN1_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
 	
     switch (temp_id)
     {
-		case (0x00):
-		{
-			switch(CAN_RxMessage->Data[0])
-			{
-				case 0x11:
-				{
-					AK_motor_feedback_handler(&akMotor_joint2, CAN_RxMessage->Header.ExtId, CAN_RxMessage->Data);
-					Robotarm.Motor_Joint1.CAN_RxCpltCallback(CAN_RxMessage->Data);
-				}
-				break;
-				case 0x12:
-				{
-					AK_motor_feedback_handler(&akMotor_joint3, CAN_RxMessage->Header.ExtId, CAN_RxMessage->Data);
-					Robotarm.Motor_Joint2.CAN_RxCpltCallback(CAN_RxMessage->Data);
-				}
-				break;
-			}
-		}
-		break;
 		case (0x01):
 		{
 //			Robotarm.Motor_Joint1.CAN_RxCpltCallback(CAN_RxMessage->Data);
@@ -173,29 +152,32 @@ void Device_CAN1_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
 		case (0x05):
 		{
 			DM_motor_feedback_handler(&dmMotor_joint4, CAN_RxMessage->Data[0] & 0x0F, CAN_RxMessage->Data);
-			Robotarm.Motor_Joint3.CAN_RxCpltCallback(CAN_RxMessage->Data);
 		}
 		break;
-		case 0x11:
+		case (0x14):
 		{
 			AK_motor_feedback_handler(&akMotor_joint2, CAN_RxMessage->Header.ExtId, CAN_RxMessage->Data);
-			Robotarm.Motor_Joint1.CAN_RxCpltCallback(CAN_RxMessage->Data);
 		}
 		break;
-		case 0x12:
+		case (0x12):
 		{
 			AK_motor_feedback_handler(&akMotor_joint3, CAN_RxMessage->Header.ExtId, CAN_RxMessage->Data);
-			Robotarm.Motor_Joint2.CAN_RxCpltCallback(CAN_RxMessage->Data);
 		}
 		break;
 		case (0x202):
 		{
-			Robotarm.Motor_Joint4.CAN_RxCpltCallback(CAN_RxMessage->Data);
+			m3508_joint5.CAN_RxCpltCallback(CAN_RxMessage->Data);
 		}
 		break;
 		case (0x203):
 		{
-			Robotarm.Motor_Joint5.CAN_RxCpltCallback(CAN_RxMessage->Data);
+			m2006_joint6.CAN_RxCpltCallback(CAN_RxMessage->Data);
+		}
+		break;
+		// 平移关节电机
+		case (0x208):
+		{
+			m3508_joint1.CAN_RxCpltCallback(CAN_RxMessage->Data);
 		}
 		break;
 		break;
@@ -204,11 +186,7 @@ void Device_CAN1_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
 	//        chariot.Chassis.Motor_Steer[1].CAN_RxCpltCallback(CAN_RxMessage->Data);
 		}
 		break;
-		case (0x207):
-		{
-	//        chariot.Chassis.Motor_Steer[2].CAN_RxCpltCallback(CAN_RxMessage->Data);
-		}
-		break;
+
     }
 }
 
@@ -237,12 +215,10 @@ void Device_CAN2_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
 		{
 			case 0x01:
 			{
-				Robotarm.Motor_Joint1.CAN_RxCpltCallback(CAN_RxMessage->Data);
 			}
 			break;
 			case 0x02:
 			{
-				Robotarm.Motor_Joint2.CAN_RxCpltCallback(CAN_RxMessage->Data);
 			}
 			break;
 		}
@@ -255,19 +231,17 @@ void Device_CAN2_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
     break;
     case (0x05):
     {
-        Robotarm.Motor_Joint3.CAN_RxCpltCallback(CAN_RxMessage->Data);
     }
     break;
     case (0x202):
     {
-        Robotarm.Motor_Joint4.CAN_RxCpltCallback(CAN_RxMessage->Data);
     }
     break;
     case (0x203):
     {
-        Robotarm.Motor_Joint5.CAN_RxCpltCallback(CAN_RxMessage->Data);
     }
     break;
+	
     }
 }
 
@@ -276,15 +250,19 @@ void Device_CAN2_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
  * @brief 机械臂解算线程，逆解耗时大概7~15ms
  *
  */
+posMatrix_t posMat = {745.64, 0, 127.45};
+RpyMatrix_t rpyMat = {0, 0, -PI/2.f};
 void RobotarmResolution_Task(void const * argument)
 {
 	while(1)
 	{
-		robotarm.Robotarm_SetEndPoseMat();
-		robotarm.Robotarm_QNowUpdate();
-		robotarm.Robotarm_IKine();
+		posNRpyMatrix_t endPosNRpyNow;
+		robotarm.Robotarm_GetEndPosNRpyNow(&endPosNRpyNow);
+		robotarm.Robotarm_SetEndPosNRpyTarget(posMat, rpyMat);	// 设置末端位姿
+		robotarm.Robotarm_QNowUpdate();						// 更新当前Q矩阵
+		robotarm.Robotarm_IKine();							// 逆运动学
 		//Robotarm.Robotarm_Resolution.Reload_Task_Status_PeriodElapsedCallback();
-		osDelay(35);
+		osDelay(25);
 	}
 }
 
@@ -306,7 +284,7 @@ void Motor_Task(void const * argument)
 		if (mod50 == 100)
 		{
 			mod50 = 0;
-			Robotarm.Task_Alive_PeriodElapsedCallback();
+			//Robotarm.Task_Alive_PeriodElapsedCallback();
 		}
 		
 //		Robotarm.Task_Calculate_PeriodElapsedCallback();
@@ -317,8 +295,7 @@ void Motor_Task(void const * argument)
 //		{
 //			Task_CAN_PeriodElapsedCallback();
 //		}
-		osDelay(1);
-		Icac_TaskScheduler();
+		osDelay(5);
 	}
 }
 
@@ -335,11 +312,11 @@ void Cammand_Task(void const * argument)
 		if (mod50 == 500)
 		{
 			mod50 = 0;
-			Robotarm.DR16.Task_Alive_PeriodElapsedCallback();
-			Robotarm.Referee.Task_Alive_PeriodElapsedCallback();
+			//Robotarm.DR16.Task_Alive_PeriodElapsedCallback();
+			//Robotarm.Referee.Task_Alive_PeriodElapsedCallback();
 		}
 		//设置目标位姿
-		Robotarm.Task_Control_Robotarm();
+		//Robotarm.Task_Control_Robotarm();
 		osDelay(2);
 	}
 }
@@ -353,7 +330,7 @@ void Communication_Task(void const * argument)
 	
 	while(1)
 	{
-		Robotarm.Task_Chassis_Communication_PeriodElapsedCallback();
+		//Robotarm.Task_Chassis_Communication_PeriodElapsedCallback();
 		osDelay(2);
 	}
 	
@@ -370,6 +347,7 @@ void init()
 	UART_Init(&huart3, DR16_UART3_Callback, 18);
 	UART_Init(&huart6, Referee_UART6_Callback, 128);
 //	Robotarm.Init();
+	DjiMotor_Init();
 	DM_motor_Init();
 	AK_motor_Init();
 	
@@ -387,7 +365,7 @@ void test()
 	
 	
 		osDelay(2);
-////		revjoint3.setBodyFrameJointAngle(0.f);
+////		revJoint3.setBodyFrameJointAngle(0.f);
 	
 	// 如果有电机掉线，执行校准
 //	if (Icac_GetConnectionStatus(&icac_akMotor_joint1) || Icac_GetConnectionStatus(&icac_akMotor_joint2))

@@ -55,7 +55,7 @@
           <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
-          <ListingPath></ListingPath>
+          <ListingPath>.\robotarm\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
@@ -80,9 +80,9 @@
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>0</RunUserProg1>
+            <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>1</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
+            <UserProg1Name>keil-build-viewer.exe</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -829,11 +829,6 @@
               <FileName>tsk_config_and_callback.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\User\Task\tsk_config_and_callback.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>robotarm_task.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\User\Task\robotarm_task.cpp</FilePath>
             </File>
             <File>
               <FileName>chassis_Communication.cpp</FileName>
@@ -1596,11 +1591,6 @@
               <FileName>Joint.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\User\App\Joint.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>icac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\App\icac.c</FilePath>
             </File>
             <File>
               <FileName>robotarm.cpp</FileName>

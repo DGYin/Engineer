@@ -23,6 +23,10 @@
 
 /* Function prototypes -------------------------------------------------------*/
 
+
+Class_DJI_Motor_C620 m3508_joint1, m3508_joint5;
+Class_DJI_Motor_C610 m2006_joint6;
+
 /**
  * @brief 分配CAN发送缓冲区
  *
@@ -570,7 +574,7 @@ void Class_DJI_Motor_C620::Data_Process()
     Data.Total_Encoder = Data.Total_Round * Encoder_Num_Per_Round + tmp_encoder;
 
     //计算电机本身信息
-    Data.Now_Angle = (float)Data.Total_Encoder / (float)Encoder_Num_Per_Round * 360.0f / Gearbox_Rate;
+    Data.Now_Angle = (float)Data.Total_Encoder / (float)Encoder_Num_Per_Round * 2*PI / Gearbox_Rate;
     Data.Now_Omega = (float)tmp_omega * RPM_TO_RADPS / Gearbox_Rate;
     Data.Now_Torque = tmp_torque;
     Data.Now_Temperature = tmp_buffer->Temperature;
@@ -676,5 +680,29 @@ void Class_DJI_Motor_C620::Task_PID_PeriodElapsedCallback()
     }
     Output();
 }
+
+void DjiMotor_Init(void)
+{
+	// 关节1 电机初始化
+	m3508_joint1.PID_Angle.Init(1.2f, 0.7f, 0.01f, 0.0f, 2.0f * PI, 2.0f * PI);
+	//m3508_joint1.PID_Omega.SetCompensation(1000);
+	m3508_joint1.PID_Omega.Init(1000.0f, 1500.f, 0.0000f, 0, 10000, 16384);
+	m3508_joint1.Init(&hcan1, DJI_Motor_ID_0x208);
+	m3508_joint1.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_ANGLE);
+	m3508_joint1.PID_Omega.Set_Out_Max(16384);
+	// 关节5 电机初始化
+	m3508_joint5.PID_Angle.Init(1.f, 0.1f, 0.01f, 0.0f, 1.0f * PI, 1.0f * PI);
+	m3508_joint5.PID_Omega.Init(3500.0f, 4000.0f, 0.0000f, 0, 5000, 10000);
+	m3508_joint5.Init(&hcan1, DJI_Motor_ID_0x202);
+	m3508_joint5.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_ANGLE);
+	m3508_joint5.PID_Omega.Set_Out_Max(16384);
+	// 关节6 电机初始化
+	m2006_joint6.PID_Angle.Init(0.7f, 0.0f, 0.00f, 0.0f, 1.0f * PI, 1.0f * PI);
+	m2006_joint6.PID_Omega.Init(5000.0f, 0.0f, 0.0000f, 0, m2006_joint6.Get_Output_Max(), m2006_joint6.Get_Output_Max());
+	m2006_joint6.Init(&hcan1, DJI_Motor_ID_0x203);
+	m2006_joint6.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_ANGLE);
+	m2006_joint6.PID_Omega.Set_Out_Max(10000);
+}
+
 
 /************************ COPYRIGHT(C) USTC-ROBOWALKER **************************/

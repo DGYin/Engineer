@@ -45,7 +45,7 @@
         <PageWidth>79</PageWidth>
         <PageLength>66</PageLength>
         <TabStop>8</TabStop>
-        <ListingPath></ListingPath>
+        <ListingPath>.\robotarm\</ListingPath>
       </OPTLEX>
       <ListingPage>
         <CreateCListing>1</CreateCListing>
@@ -162,9 +162,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>284</LineNumber>
+          <LineNumber>298</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134240620</Address>
+          <Address>134239954</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -173,30 +173,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\User\Task\tsk_config_and_callback.cpp</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\robotarm\../User/Task/tsk_config_and_callback.cpp\284</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>283</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\User\Task\tsk_config_and_callback.cpp</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
+          <Expression>\\robotarm\../User/Task/tsk_config_and_callback.cpp\298</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>dmMotor_joint3</ItemText>
+          <ItemText>dmMotor_joint4</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
@@ -228,6 +212,51 @@
           <WinNumber>1</WinNumber>
           <ItemText>pp,0x0A</ItemText>
         </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>robotarm</ItemText>
+        </Ww>
+        <Ww>
+          <count>8</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>endPoseMat</ItemText>
+        </Ww>
+        <Ww>
+          <count>9</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>akMotor_joint3</ItemText>
+        </Ww>
+        <Ww>
+          <count>10</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>m3508_joint1</ItemText>
+        </Ww>
+        <Ww>
+          <count>11</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>priJoint1</ItemText>
+        </Ww>
+        <Ww>
+          <count>12</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>targetHeight</ItemText>
+        </Ww>
+        <Ww>
+          <count>13</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>nowHeight</ItemText>
+        </Ww>
+        <Ww>
+          <count>14</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>m3508_joint5</ItemText>
+        </Ww>
+        <Ww>
+          <count>15</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>jointQNow</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -250,7 +279,7 @@
       <DebugFlag>
         <trace>0</trace>
         <periodic>1</periodic>
-        <aLwin>0</aLwin>
+        <aLwin>1</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>
@@ -941,18 +970,6 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\User\Task\robotarm_task.cpp</PathWithFileName>
-      <FilenameWithoutPath>robotarm_task.cpp</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>50</FileNumber>
-      <FileType>8</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
       <PathWithFileName>..\User\Task\chassis_Communication.cpp</PathWithFileName>
       <FilenameWithoutPath>chassis_Communication.cpp</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
@@ -968,7 +985,7 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>9</GroupNumber>
-      <FileNumber>51</FileNumber>
+      <FileNumber>50</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -980,7 +997,7 @@
     </File>
     <File>
       <GroupNumber>9</GroupNumber>
-      <FileNumber>52</FileNumber>
+      <FileNumber>51</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -992,7 +1009,7 @@
     </File>
     <File>
       <GroupNumber>9</GroupNumber>
-      <FileNumber>53</FileNumber>
+      <FileNumber>52</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1004,7 +1021,7 @@
     </File>
     <File>
       <GroupNumber>9</GroupNumber>
-      <FileNumber>54</FileNumber>
+      <FileNumber>53</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1016,7 +1033,7 @@
     </File>
     <File>
       <GroupNumber>9</GroupNumber>
-      <FileNumber>55</FileNumber>
+      <FileNumber>54</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1028,7 +1045,7 @@
     </File>
     <File>
       <GroupNumber>9</GroupNumber>
-      <FileNumber>56</FileNumber>
+      <FileNumber>55</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1040,7 +1057,7 @@
     </File>
     <File>
       <GroupNumber>9</GroupNumber>
-      <FileNumber>57</FileNumber>
+      <FileNumber>56</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1052,7 +1069,7 @@
     </File>
     <File>
       <GroupNumber>9</GroupNumber>
-      <FileNumber>58</FileNumber>
+      <FileNumber>57</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1064,7 +1081,7 @@
     </File>
     <File>
       <GroupNumber>9</GroupNumber>
-      <FileNumber>59</FileNumber>
+      <FileNumber>58</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1076,7 +1093,7 @@
     </File>
     <File>
       <GroupNumber>9</GroupNumber>
-      <FileNumber>60</FileNumber>
+      <FileNumber>59</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1096,7 +1113,7 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>10</GroupNumber>
-      <FileNumber>61</FileNumber>
+      <FileNumber>60</FileNumber>
       <FileType>4</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1108,7 +1125,7 @@
     </File>
     <File>
       <GroupNumber>10</GroupNumber>
-      <FileNumber>62</FileNumber>
+      <FileNumber>61</FileNumber>
       <FileType>4</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1128,7 +1145,7 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>11</GroupNumber>
-      <FileNumber>63</FileNumber>
+      <FileNumber>62</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1140,7 +1157,7 @@
     </File>
     <File>
       <GroupNumber>11</GroupNumber>
-      <FileNumber>64</FileNumber>
+      <FileNumber>63</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1152,7 +1169,7 @@
     </File>
     <File>
       <GroupNumber>11</GroupNumber>
-      <FileNumber>65</FileNumber>
+      <FileNumber>64</FileNumber>
       <FileType>8</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1164,19 +1181,7 @@
     </File>
     <File>
       <GroupNumber>11</GroupNumber>
-      <FileNumber>66</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\User\App\icac.c</PathWithFileName>
-      <FilenameWithoutPath>icac.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>11</GroupNumber>
-      <FileNumber>67</FileNumber>
+      <FileNumber>65</FileNumber>
       <FileType>8</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1196,7 +1201,7 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>12</GroupNumber>
-      <FileNumber>68</FileNumber>
+      <FileNumber>66</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1208,7 +1213,7 @@
     </File>
     <File>
       <GroupNumber>12</GroupNumber>
-      <FileNumber>69</FileNumber>
+      <FileNumber>67</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1220,7 +1225,7 @@
     </File>
     <File>
       <GroupNumber>12</GroupNumber>
-      <FileNumber>70</FileNumber>
+      <FileNumber>68</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>

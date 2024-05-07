@@ -123,7 +123,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   
-  osThreadDef(MotorTask, Motor_Task, osPriorityNormal, 0, 256);
+  osThreadDef(MotorTask, Motor_Task, osPriorityNormal, 0, 512*6);
   MotorTaskHandle = osThreadCreate(osThread(MotorTask), NULL);
   
   osThreadDef(RobotarmTask, RobotarmResolution_Task, osPriorityBelowNormal, 0, 1024*3);

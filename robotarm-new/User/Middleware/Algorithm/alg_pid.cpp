@@ -155,7 +155,7 @@ void Class_PID::TIM_Adjust_PeriodElapsedCallback()
 
     //计算总共的输出
 
-    Out = p_out + i_out + d_out + f_out;
+    Out = p_out + i_out + d_out + f_out + compensation;
     //输出限幅
     if (Out_Max != 0.0f)
     {
@@ -169,4 +169,9 @@ void Class_PID::TIM_Adjust_PeriodElapsedCallback()
     Pre_Error = error;
 }
 
+
+void Class_PID::SetCompensation(float comp)
+{
+	compensation = comp;
+}
 /************************ COPYRIGHT(C) USTC-ROBOWALKER **************************/

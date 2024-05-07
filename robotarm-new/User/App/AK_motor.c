@@ -149,7 +149,7 @@ void AK_motor_Init(void)
 	// 初始化关节1电机
 	init_struct.reduction_rate		= 6;
 	init_struct.polor_num			= 21; // 相数和减速比由电机机械结构决定，需查询电机手册
-	init_struct.CANID				= 0x11;
+	init_struct.CANID				= 0x14;
 	init_struct.torque_coefficient	= 0.091; // 转矩系数需查询电机手册
 	init_struct.peripheral_handle	= &hcan1;
 	init_struct.callbackMode		= AK_MOTOR_AUTO_CALLBACK_MODE;

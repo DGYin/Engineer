@@ -42,7 +42,8 @@ public:
     inline float Get_Integral_Error();
     inline float Get_Out();
 	inline float Get_Out_Max();
-
+	
+	void SetCompensation(float comp);
     inline void Set_K_P(float __K_P);
     inline void Set_K_I(float __K_I);
     inline void Set_K_D(float __K_D);
@@ -94,7 +95,9 @@ protected:
     float K_I = 0.0f;
     // PID的D
     float K_D = 0.0f;
-    //前馈
+	// 前馈
+	float compensation = 0.0f;
+    // 预测
     float K_F = 0.0f;
 
     //积分限幅, 0为不限制
