@@ -132,7 +132,11 @@ void Class_Chassis_Communication::Init(CAN_HandleTypeDef *hcan)
  * @param Max_Data 最大的传输数据
  * @param Enum_Chassis_Communication_ID 底盘发送报文的CAN ID
  */
-void Class_Chassis_Communication::Communication_Data(float Data,float Min_Data,float Max_Data,Enum_Chassis_Communication_ID Chassis_Communication_ID,uint8_t Pos)
+void Class_Chassis_Communication::Communication_Data(	float Data,
+														float Min_Data,
+														float Max_Data,
+														Enum_Chassis_Communication_ID Chassis_Communication_ID,
+														uint8_t Pos)
 {
 	CAN_ID = Chassis_Communication_ID;
 	CAN_Tx_Data = allocate_tx_data(CAN_Manage_Object->CAN_Handler, Chassis_Communication_ID);

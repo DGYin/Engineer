@@ -62,6 +62,8 @@ class prismaticJoint_c{	// 关节的所有位移都为 m
 		float getBodyFrameJointDisplacement();
 		// 设置关节机械限位角度
 		JOINT_RETURN_T jointSetMechLimit(float upperLim, float lowerLim, float margin=0.01f);
+		float GetLowerLimit();		// 获得带有软件缓冲角度的机械限位值
+		float GetUpperLimit();
 		// 电机连接状态
 		JOINT_RETURN_T jointConnectionStateUpdate();
 		JOINT_MOTOR_CONNECTION_STATE_T jointGetConnectionState();
@@ -110,8 +112,12 @@ class revoluteJoint_c{	// 关节的所有角度都为弧度
 		JOINT_RETURN_T setBodyFrameJointAngle(float targetRad);
 		// 获得关节角度
 		float getBodyFrameJointAngle();
-		// 设置关节机械限位角度
+		// 关节机械限位角度相关
 		JOINT_RETURN_T jointSetMechLimit(float cwLim, float ccwLim, float margin=0.2f);
+		float GetCwMechLimit();		// 获得不带软件缓冲角度的机械限位值
+		float GetCcwMechLimit();
+		float GetCwLimit();		// 获得带有软件缓冲角度的机械限位值
+		float GetCcwLimit();
 		// 电机连接状态
 		JOINT_RETURN_T jointConnectionStateUpdate();
 		JOINT_MOTOR_CONNECTION_STATE_T jointGetConnectionState();
@@ -122,8 +128,9 @@ class revoluteJoint_c{	// 关节的所有角度都为弧度
 		float cwMechLimitRad;	// 从电机输出轴看，CW方向转到极限时相对杆伸出方向的夹角。为负值。
 		float ccwMechLimitRad;	// 从电机输出轴看，CCW方向转到极限时相对杆伸出方向的夹角。为正值。
 		float mechLimitMarginRad;	// 给关节机械限位留裕量，防止直接打到限位上
+		float reductionRate = 1.f;	// 传动比，注意包含正负号表示正反转。（关节轴比电机轴尺比）
 		// 进行关节校准相关
-		JOINT_RETURN_T jointCaliInit(	float omege=1.f,
+		JOINT_RETURN_T jointCaliInit(	float omege=1.2f,
 										float delPos=0.1f,
 										uint8_t afLength=40,
 										float tole=0.012f,

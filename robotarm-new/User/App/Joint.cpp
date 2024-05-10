@@ -133,7 +133,7 @@ JOINT_RETURN_T prismaticJoint_c::jointCalibrate(Class_DJI_Motor_C620* djiC620Mot
 			return ret;
 	}
 	djiC620Motor->Task_PID_PeriodElapsedCallback();	// 进行一次PID运算
-	CAN_Send_Data(&hcan1, 0x1FF, CAN1_0x1ff_Tx_Data, 8, CAN_ID_STD);	// 进行一次 CAN 发送
+	CAN_Send_Data(&hcan1, 0x200, CAN1_0x200_Tx_Data, 8, CAN_ID_STD);	// 进行一次 CAN 发送
 	// 检测堵转，堵转就说明到了机械限位
 	float caliDiff = fabs(averageFilter(currentVel));	// 最近速度的均值滤波
 	if (caliDiff < caliVelocityDiffTolerance)			// 最近速度都很小，说明卡到限位了
@@ -226,7 +226,7 @@ JOINT_RETURN_T prismaticJoint_c::setBodyFrameJointDisplacement(float targetDisp)
 				extern osMutexId can1TransMutexHandle;
 				osSemaphoreWait( can1TransMutexHandle, portMAX_DELAY );// 加锁
 				{
-					CAN_Send_Data(&hcan1, 0x1FF, CAN1_0x1ff_Tx_Data, 8, CAN_ID_STD);	// 进行一次 CAN 发送
+					CAN_Send_Data(&hcan1, 0x200, CAN1_0x200_Tx_Data, 8, CAN_ID_STD);	// 进行一次 CAN 发送
 				}
 				osSemaphoreRelease( can1TransMutexHandle );// 解锁
 			}
@@ -239,6 +239,16 @@ JOINT_RETURN_T prismaticJoint_c::setBodyFrameJointDisplacement(float targetDisp)
 			return ret = JOINT_ERROR;
 	}
 	return ret;
+}
+
+float prismaticJoint_c::GetUpperLimit()
+{
+	return upperMechLimSi - mechLimitMarginSi;
+}
+
+float prismaticJoint_c::GetLowerLimit()
+{
+	return lowerMechLimSi + mechLimitMarginSi;
 }
 
 /**
@@ -295,8 +305,8 @@ JOINT_RETURN_T revoluteJoint_c::jointInit(AK_motor_t* AkMotor)
 	JOINT_RETURN_T ret;
 	motor		= AkMotor;
 	motorType	= JOINT_MOTOR_AK;
-	jointOmegaMax	= 0.05f;
-	jointDOmegaMax	= 0.01f;
+	jointOmegaMax	= 0.15f;
+	jointDOmegaMax	= 0.03f;
 	jointCaliInit();	// 校准初始化
 	return ret;
 }
@@ -312,8 +322,8 @@ JOINT_RETURN_T revoluteJoint_c::jointInit(Class_DJI_Motor_C620* djiC620Motor)
 	JOINT_RETURN_T ret;
 	motor		= djiC620Motor;
 	motorType	= JOINT_MOTOR_C620;
-	jointOmegaMax	= 0.05f;
-	jointDOmegaMax	= 0.01f;
+	jointOmegaMax	= 0.2f;
+	jointDOmegaMax	= 0.1f;
 	jointCaliInit();	// 校准初始化
 	return ret;
 }
@@ -321,7 +331,7 @@ JOINT_RETURN_T revoluteJoint_c::jointInit(Class_DJI_Motor_C620* djiC620Motor)
 /**
 * @brief 初始化关节，适用于C610电调配套电机
  *
- * @param AkMotor
+ * @param Class_DJI_Motor_C610
  * @return JOINT_RETURN_T
  */
 JOINT_RETURN_T revoluteJoint_c::jointInit(Class_DJI_Motor_C610* djiC610Motor)
@@ -329,8 +339,9 @@ JOINT_RETURN_T revoluteJoint_c::jointInit(Class_DJI_Motor_C610* djiC610Motor)
 	JOINT_RETURN_T ret;
 	motor		= djiC610Motor;
 	motorType	= JOINT_MOTOR_C610;
-	jointOmegaMax	= 0.05f;
-	jointDOmegaMax	= 0.01f;
+	jointOmegaMax	= 0.2f;
+	jointDOmegaMax	= 0.1f;
+	reductionRate	= -3.f;	// 设置传动比
 	jointCaliInit();	// 校准初始化
 	return ret;
 }
@@ -416,6 +427,8 @@ float revoluteJoint_c::getBodyFrameJointAngle()
 		default:
 			return ret = 0;
 	}
+	// 传动比处理
+	ret = ret / reductionRate;
 	// 计算相对限位角度
 	switch(caliDir)
 	{
@@ -423,7 +436,7 @@ float revoluteJoint_c::getBodyFrameJointAngle()
 			ret = ret - calibratedPositionRad + ccwMechLimitRad;
 			break;
 		case JOINT_CALI_DIRECTION_CW:
-			ret = ret + calibratedPositionRad + cwMechLimitRad;
+			ret = ret - calibratedPositionRad - cwMechLimitRad;
 			break;
 		default:
 			return ret = 0;
@@ -449,13 +462,14 @@ JOINT_RETURN_T revoluteJoint_c::setBodyFrameJointAngle(float targetRad)
 	switch(caliDir)
 	{
 		case JOINT_CALI_DIRECTION_CCW:
-			targetRad = calibratedPositionRad - (ccwMechLimitRad - targetRad);
+			targetRad = calibratedPositionRad - (ccwMechLimitRad - targetRad*reductionRate);
 			break;
 		case JOINT_CALI_DIRECTION_CW:
-			targetRad = calibratedPositionRad + targetRad + cwMechLimitRad;
+			targetRad = calibratedPositionRad + targetRad*reductionRate + cwMechLimitRad;
 			break;
 		default:
 			return ret = JOINT_ERROR;
+			break;
 	}
 
 	DM_motor_posVelModeCommand_t dmCommand;
@@ -463,11 +477,13 @@ JOINT_RETURN_T revoluteJoint_c::setBodyFrameJointAngle(float targetRad)
 	{
 		case JOINT_MOTOR_DM:
 			dmCommand.targetPosition	= targetRad;
-			dmCommand.targetVelocity	= PI;	// 随便设置一个最大速度
+			dmCommand.targetVelocity	= PI/2.f;	// 随便设置一个最大速度
+//			ret = (JOINT_RETURN_T) DM_motor_setDisable((DM_motor_t*) motor);	// 测试用的
 			ret = (JOINT_RETURN_T) DM_motor_setPosVelControl((DM_motor_t*) motor, dmCommand);
 			return ret;
 			break;
 		case JOINT_MOTOR_AK:
+			
 			AK_motor_SetMultiPositionSpeedAcceleration_SI(	(AK_motor_t*) motor,
 															targetRad*RAD_TO_DEGREE,
 															jointOmegaMax*RAD_TO_DEGREE,
@@ -481,7 +497,7 @@ JOINT_RETURN_T revoluteJoint_c::setBodyFrameJointAngle(float targetRad)
 			break;
 		case JOINT_MOTOR_C610:
 			((Class_DJI_Motor_C610*)motor)->Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_ANGLE);
-			((Class_DJI_Motor_C610*)motor)->Set_Target_Angle(targetRad);
+			((Class_DJI_Motor_C610*)motor)->Set_Target_Angle(targetRad);	// 有传动比，要反向
 			((Class_DJI_Motor_C610*)motor)->Task_PID_PeriodElapsedCallback();	// 进行一次 PID 运算
 			CAN_Send_Data(&hcan1, 0x200, CAN1_0x200_Tx_Data, 8, CAN_ID_STD);	// 进行一次 CAN 发送
 			break;
@@ -515,7 +531,7 @@ JOINT_RETURN_T revoluteJoint_c::jointCalibrate(DM_motor_t* DmMotor)
 	}
 	// 转矩很大，可能堵转了，需要减小变化角度
 	float slowerCoeff = 1.f;
-	if (fabs(DmMotor_GetTorqueSi(DmMotor)) > 2.f)
+	if (fabs(DmMotor_GetTorqueSi(DmMotor)) > 1.5f)
 		slowerCoeff = 5.f;
 	// 根据校准角度选择策略
 	switch(caliDir)
@@ -664,11 +680,11 @@ JOINT_RETURN_T revoluteJoint_c::jointCalibrate(Class_DJI_Motor_C610* djiC610Moto
 	{
 		case JOINT_CALI_DIRECTION_CCW:
 			djiC610Motor->Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_OMEGA);
-			djiC610Motor->Set_Target_Omega(caliOmegaRadPerSec);
+			djiC610Motor->Set_Target_Omega(reductionRate*caliOmegaRadPerSec);	// 有传动反向
 			break;
 		case JOINT_CALI_DIRECTION_CW:
 			djiC610Motor->Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_OMEGA);
-			djiC610Motor->Set_Target_Omega(-caliOmegaRadPerSec);
+			djiC610Motor->Set_Target_Omega(reductionRate*caliOmegaRadPerSec);		// 有传动反向
 			break;
 		default:
 			return ret;
@@ -724,7 +740,25 @@ JOINT_RETURN_T revoluteJoint_c::jointSetMechLimit(float cwLim, float ccwLim, flo
 	return ret;
 }
 
+float revoluteJoint_c::GetCwMechLimit()
+{
+	return cwMechLimitRad;
+}
 
+float revoluteJoint_c::GetCcwMechLimit()
+{
+	return ccwMechLimitRad;
+}
+
+float revoluteJoint_c::GetCwLimit()
+{
+	return cwMechLimitRad + mechLimitMarginRad;
+}
+
+float revoluteJoint_c::GetCcwLimit()
+{
+	return ccwMechLimitRad - mechLimitMarginRad;
+}
 /**
  * @brief 均值滤波，在校准中用到了
  *

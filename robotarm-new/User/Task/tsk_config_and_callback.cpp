@@ -44,6 +44,8 @@
 #include "Joint.hpp"
 #include "robotarm.hpp"
 #include "drv_uart.h"
+#include "vofa.h"
+#include "pathfinder.hpp"
 /* Private types -------------------------------------------------------------*/
 
 /* Private variables ---------------------------------------------------------*/
@@ -62,7 +64,7 @@ extern osSemaphoreId Communication_SemHandle;
  */
 void DR16_UART3_Callback(uint8_t *Buffer, uint16_t Length)
 {
-    //Robotarm.DR16.UART_RxCpltCallback(Buffer);
+    robotarm.DR16.UART_RxCpltCallback(Buffer);
 }
 
 /**
@@ -175,7 +177,7 @@ void Device_CAN1_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
 		}
 		break;
 		// 平移关节电机
-		case (0x208):
+		case (0x201):
 		{
 			m3508_joint1.CAN_RxCpltCallback(CAN_RxMessage->Data);
 		}
@@ -250,21 +252,44 @@ void Device_CAN2_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
  * @brief 机械臂解算线程，逆解耗时大概7~15ms
  *
  */
-posMatrix_t posMat = {745.64, 0, 127.45};
+posMatrix_t posMat = {326.32, -10.288, 127.45};
 RpyMatrix_t rpyMat = {0, 0, -PI/2.f};
+posNRpyMatrix_t endPosNRpyTarget = {300.32, 0, 50.45, 0, 0, 0};
 void RobotarmResolution_Task(void const * argument)
 {
 	while(1)
 	{
 		posNRpyMatrix_t endPosNRpyNow;
-		robotarm.Robotarm_GetEndPosNRpyNow(endPosNRpyNow);		// 获得当前末端位姿 （rpy型）
-		robotarm.Robotarm_SetEndPosNRpyTarget(posMat, rpyMat);	// 设置末端位姿 （rpy型）
-		robotarm.Robotarm_QNowUpdate();							// 更新当前Q矩阵
-		robotarm.Robotarm_IKine();								// 逆运动学
+		robotarm.Robotarm_QNowUpdate();								// 更新当前Q矩阵
+		qMatrix_t jointQNow;
+		robotarm.Robotarm_GetQMat(jointQNow);						// 获取当前Q矩阵
+		robotarm.Robotarm_FKine();									// 获得当前末端位姿 （rpy型）
+		
+		pathfinder.Pathfinder_SetTask(PATHFINDER_SILVER_ORE_PICK_PRIORITY);	// 设置当前任务
+		pathfinder.Pathfinder_CheckReady(jointQNow);						// 检查是否准备好
+		pathfinder.Pathfinder_TaskScheduler();								// 进行一次调度
+		qMatrix_t jointQTarget;
+		pathfinder.Pathfinder_GetQMat(jointQTarget);						// 获取目标Q矩阵
+		robotarm.Robotarm_SetQMatTarget(jointQTarget);
+		
+//		robotarm.Robotarm_SetEndPosNRpyTarget(endPosNRpyTarget);	// 设置末端位姿 （rpy型）
+//		robotarm.Robotarm_IKineGeo();
+//		robotarm.Robotarm_FKine();									// 获得当前末端位姿 （rpy型）
+////		
+//		robotarm.Robotarm_GetEndPosNRpyNow(endPosNRpyNow);		
+//		qMatrix_t qNow;
+//		robotarm.Robotarm_GetQMat(qNow);
+//		Vofa_JustFloatInSeperatedChannelTransmit(&vofa, qNow, 6);
+		
+//		
+//		
+//		robotarm.Robotarm_IKine();									// 逆运动学
 		//Robotarm.Robotarm_Resolution.Reload_Task_Status_PeriodElapsedCallback();
+		
+		// 看看任务中最少还剩多少 stack 内存，方便调整大小
 		extern osThreadId RobotarmTaskHandle;
 		UBaseType_t remaining = uxTaskGetStackHighWaterMark((TaskHandle_t)RobotarmTaskHandle);
-		osDelay(35);
+		osDelay(2);
 	}
 }
 
@@ -297,6 +322,8 @@ void Motor_Task(void const * argument)
 //		{
 //			Task_CAN_PeriodElapsedCallback();
 //		}
+		
+		// 看看任务中最少还剩多少 stack 内存，方便调整大小
 		extern osThreadId MotorTaskHandle;
 		UBaseType_t remaining = uxTaskGetStackHighWaterMark(MotorTaskHandle);
 		osDelay(5);
@@ -316,11 +343,11 @@ void Cammand_Task(void const * argument)
 		if (mod50 == 500)
 		{
 			mod50 = 0;
-			//Robotarm.DR16.Task_Alive_PeriodElapsedCallback();
-			//Robotarm.Referee.Task_Alive_PeriodElapsedCallback();
+			robotarm.DR16.Task_Alive_PeriodElapsedCallback();
+			robotarm.Referee.Task_Alive_PeriodElapsedCallback();
 		}
 		//设置目标位姿
-		//Robotarm.Task_Control_Robotarm();
+		robotarm.Task_Control_Robotarm();
 		osDelay(2);
 	}
 }
@@ -334,7 +361,7 @@ void Communication_Task(void const * argument)
 	
 	while(1)
 	{
-		//Robotarm.Task_Chassis_Communication_PeriodElapsedCallback();
+		robotarm.Task_Chassis_Communication_PeriodElapsedCallback();
 		osDelay(2);
 	}
 	
@@ -355,9 +382,10 @@ void init()
 	DM_motor_Init();
 	AK_motor_Init();
 	
-	
+	Vofa_InitExample(&vofa);
 	// 初始化机械臂
 	robotarm.Robotarm_Init();
+	pathfinder.Pathfinder_Init();
 	
 //	Icac_HandleInit();
 	

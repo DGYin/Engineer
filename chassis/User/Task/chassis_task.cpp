@@ -55,45 +55,45 @@ void Class_Chassis::Init(float __Velocity_X_Max, float __Velocity_Y_Max, float _
     {
         Motor_Wheel[i].PID_Omega.Init(1000.0f, 0.0f, 0.01f, 0.0f, Motor_Wheel[i].Get_Output_Max(), Motor_Wheel[i].Get_Output_Max());
     }
-	Motor_Rise.PID_Angle.Init(0.5f, 0.0f, 0.01f, 0.0f, 1.0f * PI, 1.0f * PI);
-	Motor_Rise.PID_Omega.Init(4000.0f, 0.1f, 0.0000f, 0, Motor_Rise.Get_Output_Max(), Motor_Rise.Get_Output_Max());
+//	Motor_Rise.PID_Angle.Init(0.5f, 0.0f, 0.01f, 0.0f, 1.0f * PI, 1.0f * PI);
+//	Motor_Rise.PID_Omega.Init(4000.0f, 0.1f, 0.0000f, 0, Motor_Rise.Get_Output_Max(), Motor_Rise.Get_Output_Max());
 	
     //轮向电机
     Motor_Wheel[0].Init(&hcan1, DJI_Motor_ID_0x201);
     Motor_Wheel[1].Init(&hcan1, DJI_Motor_ID_0x202);
     Motor_Wheel[2].Init(&hcan1, DJI_Motor_ID_0x203);
 	Motor_Wheel[3].Init(&hcan1, DJI_Motor_ID_0x204);
-	Motor_Rise.Init(&hcan1, DJI_Motor_ID_0x205);
+//	Motor_Rise.Init(&hcan1, DJI_Motor_ID_0x205);
 }
 
 
-bool Class_Chassis::Rise_Calibration(float Cali_Omega,float Cali_Max_Out, float Target_Height)
-{
-	//记录电机堵转时间
-	static uint16_t count;
-	//设置为速度环校准
-	Motor_Rise.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_OMEGA);
-	Motor_Rise.Set_Target_Omega(Cali_Omega);
-	Motor_Rise.PID_Omega.Set_Out_Max(Cali_Max_Out);
-	
-	//当电流值大于阈值，同时速度小于一定阈值，判定为堵转条件
-	if( (fabs(Motor_Rise.Get_Now_Torque()) >= 2000) && (fabs(Motor_Rise.Get_Now_Omega()) < 0.01*PI) )
-	{
-		count++;
-		//当到达一定时间，判定为堵转
-		if(count >= 200)
-		{
-			//改为角度环，设置关节角度
-			Motor_Rise.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_ANGLE);
-			Motor_Rise.PID_Omega.Set_Out_Max(16384);
-			Rise_Offset_Angle = Motor_Rise.Get_Now_Angle();
-			Robotarm_Height = Target_Height;
-			count = 0;
-			return true;
-		}	
-	}
-	return false;
-}
+//bool Class_Chassis::Rise_Calibration(float Cali_Omega,float Cali_Max_Out, float Target_Height)
+//{
+//	//记录电机堵转时间
+//	static uint16_t count;
+//	//设置为速度环校准
+//	Motor_Rise.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_OMEGA);
+//	Motor_Rise.Set_Target_Omega(Cali_Omega);
+//	Motor_Rise.PID_Omega.Set_Out_Max(Cali_Max_Out);
+//	
+//	//当电流值大于阈值，同时速度小于一定阈值，判定为堵转条件
+//	if( (fabs(Motor_Rise.Get_Now_Torque()) >= 2000) && (fabs(Motor_Rise.Get_Now_Omega()) < 0.01*PI) )
+//	{
+//		count++;
+//		//当到达一定时间，判定为堵转
+//		if(count >= 200)
+//		{
+//			//改为角度环，设置关节角度
+//			Motor_Rise.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_ANGLE);
+//			Motor_Rise.PID_Omega.Set_Out_Max(16384);
+//			Rise_Offset_Angle = Motor_Rise.Get_Now_Angle();
+//			Robotarm_Height = Target_Height;
+//			count = 0;
+//			return true;
+//		}	
+//	}
+//	return false;
+//}
 
 /**
  * @brief 输出到电机
@@ -120,18 +120,18 @@ void Class_Chassis::Output()
 		}
     }
 
-	if (Rise_Control_Type == Rise_Control_Type_DISABLE)
-	{
-		Motor_Rise.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_OPENLOOP);
-		Motor_Rise.PID_Angle.Set_Integral_Error(0.0f);
-		Motor_Rise.PID_Omega.Set_Integral_Error(0.0f);
-		Motor_Rise.Set_Target_Torque(0.0f);
-	}
-	else if (Rise_Control_Type == Rise_Control_Type_ENABLE && (Motor_Rise.Get_Control_Method() != DJI_Motor_Control_Method_OMEGA))
-	{
-		Motor_Rise.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_ANGLE);
-		Set_Motor_Angle(Motor_Rise);
-	}
+//	if (Rise_Control_Type == Rise_Control_Type_DISABLE)
+//	{
+//		Motor_Rise.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_OPENLOOP);
+//		Motor_Rise.PID_Angle.Set_Integral_Error(0.0f);
+//		Motor_Rise.PID_Omega.Set_Integral_Error(0.0f);
+//		Motor_Rise.Set_Target_Torque(0.0f);
+//	}
+//	else if (Rise_Control_Type == Rise_Control_Type_ENABLE && (Motor_Rise.Get_Control_Method() != DJI_Motor_Control_Method_OMEGA))
+//	{
+//		Motor_Rise.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_ANGLE);
+//		Set_Motor_Angle(Motor_Rise);
+//	}
 	
 }
 
@@ -175,21 +175,21 @@ void Class_Chassis::Target_Resolution()
     Slope_Omega.TIM_Calculate_PeriodElapsedCallback();
 }
 
-void Class_Chassis::Rise_Control()
-{
-	static bool Rise_Cal_Flag = false;
-	if(Rise_Cal_Flag == false)
-	{
-		if(Rise_Calibration(-0.2*PI , 4000 , 20) == true)
-		{
-			Rise_Cal_Flag = true;
-		}
-	}
-	else if(Rise_Control_Type == Rise_Control_Type_DISABLE)
-	{
-		Rise_Cal_Flag =false;
-	}
-}
+//void Class_Chassis::Rise_Control()
+//{
+//	static bool Rise_Cal_Flag = false;
+//	if(Rise_Cal_Flag == false)
+//	{
+//		if(Rise_Calibration(-0.2*PI , 4000 , 20) == true)
+//		{
+//			Rise_Cal_Flag = true;
+//		}
+//	}
+//	else if(Rise_Control_Type == Rise_Control_Type_DISABLE)
+//	{
+//		Rise_Cal_Flag =false;
+//	}
+//}
 /**
  * @brief 底盘状态检测回调函数
  *
@@ -213,15 +213,15 @@ void Class_Chassis::Task_Alive_PeriodElapsedCallback()
 		Chassis_Control_Type = Chassis_Control_Type_DISABLE;
 	}
 	//抬升电机检测
-	Motor_Rise.Task_Alive_PeriodElapsedCallback();
-	if(Motor_Rise.Get_DJI_Motor_Status() == DJI_Motor_Status_ENABLE)
-	{
-		Rise_Control_Type = Rise_Control_Type_ENABLE;
-	}
-	else
-	{
-		Rise_Control_Type = Rise_Control_Type_DISABLE;
-	}
+//	Motor_Rise.Task_Alive_PeriodElapsedCallback();
+//	if(Motor_Rise.Get_DJI_Motor_Status() == DJI_Motor_Status_ENABLE)
+//	{
+//		Rise_Control_Type = Rise_Control_Type_ENABLE;
+//	}
+//	else
+//	{
+//		Rise_Control_Type = Rise_Control_Type_DISABLE;
+//	}
 	
 }
 /**
@@ -235,7 +235,7 @@ void Class_Chassis::Task_Calculate_PeriodElapsedCallback()
     //速度解算
     Inverse_Kinematic();
 	
-	Rise_Control();
+//	Rise_Control();
 	//输出限制
 	Output();
 
@@ -245,7 +245,7 @@ void Class_Chassis::Task_Calculate_PeriodElapsedCallback()
         Motor.Task_PID_PeriodElapsedCallback();
     }
 
-	Motor_Rise.Task_PID_PeriodElapsedCallback();
+//	Motor_Rise.Task_PID_PeriodElapsedCallback();
 }
 
 /* ÖÐÑë±ê³ß¸ß¶È±äÁ¿ */

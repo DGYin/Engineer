@@ -36,6 +36,7 @@ float math::limitMax(float val, const float& max) {
 float math::loopLimit(float val, const float& min, const float& max) {
   if (min >= max)
     return val;
+  val = val - floor(val/(max - min))*(max - min);
   if (val > max) {
     while (val > max)
       val -= (max - min);

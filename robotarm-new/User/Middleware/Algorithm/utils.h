@@ -13,6 +13,7 @@
 #define UTILS_H
 
 #include <stdint.h>
+#include <math.h>
 
 namespace math {
 

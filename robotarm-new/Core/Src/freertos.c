@@ -63,6 +63,7 @@ extern void Communication_Task(void const * argument);
 
 void StartDefaultTask(void const * argument);
 
+extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* GetIdleTaskMemory prototype (linked to static allocation support) */
@@ -126,7 +127,7 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(MotorTask, Motor_Task, osPriorityNormal, 0, 512);
   MotorTaskHandle = osThreadCreate(osThread(MotorTask), NULL);
   
-  osThreadDef(RobotarmTask, RobotarmResolution_Task, osPriorityBelowNormal, 0, 4*1024);
+  osThreadDef(RobotarmTask, RobotarmResolution_Task, osPriorityAboveNormal, 0, 4*1024);
   RobotarmTaskHandle = osThreadCreate(osThread(RobotarmTask), NULL);
   
   osThreadDef(CammandTask, Cammand_Task, osPriorityNormal, 0, 128);
@@ -148,6 +149,8 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartDefaultTask */
 __weak void StartDefaultTask(void const * argument)
 {
+  /* init code for USB_DEVICE */
+  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   for(;;)

@@ -224,7 +224,7 @@ class Serial_Link {
   // param[out] q: joint variable vector
   Matrixf<_n, 1> ikine(Matrixf<4, 4> Td,
                        Matrixf<_n, 1> q = matrixf::zeros<_n, 1>(),
-                       float tol = 1e-4f, uint16_t max_iter = 50) {
+                       float tol = 1e-4f, uint16_t max_iter = 60) {
     Matrixf<4, 4> T;
     Matrixf<3, 1> pe, we;
     Matrixf<6, 1> err, new_err;

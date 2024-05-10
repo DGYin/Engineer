@@ -40,6 +40,7 @@
 #include "tsk_config_and_callback.h"
 
 #include "chassis_task.h"
+#include "buzzer.h"
 /* Private macros ------------------------------------------------------------*/
 
 /* Private types -------------------------------------------------------------*/
@@ -90,10 +91,10 @@ void Device_CAN1_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
 		Chassis.Motor_Wheel[3].CAN_RxCpltCallback(CAN_RxMessage->Data);
     }
     break;
-    case (0x205):
-    {
-		Chassis.Motor_Rise.CAN_RxCpltCallback(CAN_RxMessage->Data);
-    }
+//    case (0x205):
+//    {
+//		Chassis.Motor_Rise.CAN_RxCpltCallback(CAN_RxMessage->Data);
+//    }
     break;
     break;
     case (0x206):
@@ -171,6 +172,7 @@ void Chassis_Task(void const * argument)
 {
 	while(1)
 	{
+		buzzer_taskScheduler(&buzzer);
 		static int mod50 = 0;
 		mod50++;
 		if (mod50 == 100)
@@ -210,7 +212,8 @@ void init()
 	CAN_Init(&hcan2, Device_CAN2_Callback);
 	UART_Init(&huart1, Referee_UART1_Callback, 128);
 	Chassis.Init(0,0,0);
-	
+	buzzer_init_example();
+	buzzer_setTask(&buzzer, BUZZER_DJI_STARTUP_PRIORITY);
 }
 
 /************************ COPYRIGHT(C) USTC-ROBOWALKER **************************/

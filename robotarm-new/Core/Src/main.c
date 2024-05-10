@@ -23,6 +23,7 @@
 #include "dma.h"
 #include "tim.h"
 #include "usart.h"
+#include "usb_device.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -99,6 +100,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART6_UART_Init();
   MX_USART3_UART_Init();
+  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
 	init();
   /* USER CODE END 2 */

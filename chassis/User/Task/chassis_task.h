@@ -73,7 +73,7 @@ public:
     //四个驱动轮电机
     Class_DJI_Motor_C620 Motor_Wheel[4];
 	//机械臂抬升电机
-	Class_DJI_Motor_C620 Motor_Rise;
+	//Class_DJI_Motor_C620 Motor_Rise;
 
     inline Enum_Chassis_Control_Type Get_Chassis_Control_Type();
     inline float Get_Velocity_X_Max();
@@ -149,8 +149,8 @@ protected:
 
 	void Target_Resolution();
 	void Inverse_Kinematic();
-	void Rise_Control();
-	bool Rise_Calibration(float Cali_Omega,float Cali_Max_Out, float Target_Height);
+//	void Rise_Control();
+//	bool Rise_Calibration(float Cali_Omega,float Cali_Max_Out, float Target_Height);
     void Output();
 };
 
@@ -160,11 +160,11 @@ protected:
 /* Exported function declarations --------------------------------------------*/
 
 
-template <typename T1>
-void Class_Chassis::Set_Motor_Angle(T1 &Motor)
-{
-	Motor.Set_Target_Angle(Robotarm_Height+Rise_Offset_Angle);
-}
+//template <typename T1>
+//void Class_Chassis::Set_Motor_Angle(T1 &Motor)
+//{
+//	Motor.Set_Target_Angle(Robotarm_Height+Rise_Offset_Angle);
+//}
 
 /**
  * @brief 获取底盘控制方法

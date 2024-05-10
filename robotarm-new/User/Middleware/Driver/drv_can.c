@@ -188,7 +188,7 @@ uint8_t CAN_Send_Data(CAN_HandleTypeDef *hcan, uint16_t ID, uint8_t *Data, uint1
     tx_header.RTR = 0;
     tx_header.DLC = Length;
 	
-	while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0){}; // 等待邮箱清空
+	while (HAL_CAN_GetTxMailboxesFreeLevel(hcan) == 0){}; // 等待邮箱清空
     return (HAL_CAN_AddTxMessage(hcan, &tx_header, Data, &used_mailbox));
 }
 
