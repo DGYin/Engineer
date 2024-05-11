@@ -282,11 +282,14 @@ static uint8_t platform_setSwitch(void* peripheral_handle, uint32_t channel, BUZ
  */
 static uint8_t platform_getMsTick(uint32_t* tick)
 {
+	uint8_t ret;
 	#if defined(MOSASAURUS_ELITE_BOARD) | defined(ROBOMASTER_DEVELOPMENT_BOARD_TYPE_C) | defined (MOSASAURUS_STEERING_CONTROL_BOARD)
-		*tick = HAL_GetTick();
+		//*tick = HAL_GetTick();
+		*tick = xTaskGetTickCount();
 	#elif blablabla
 
 	#endif
+	return ret;
 }
 
     

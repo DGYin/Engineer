@@ -46,6 +46,8 @@
 #include "drv_uart.h"
 #include "vofa.h"
 #include "pathfinder.hpp"
+#include "buzzer.h"
+
 /* Private types -------------------------------------------------------------*/
 
 /* Private variables ---------------------------------------------------------*/
@@ -265,16 +267,16 @@ void RobotarmResolution_Task(void const * argument)
 		robotarm.Robotarm_GetQMat(jointQNow);						// 获取当前Q矩阵
 		robotarm.Robotarm_FKine();									// 获得当前末端位姿 （rpy型）
 		
-		pathfinder.Pathfinder_SetTask(PATHFINDER_SILVER_ORE_PICK_PRIORITY);	// 设置当前任务
-		pathfinder.Pathfinder_CheckReady(jointQNow);						// 检查是否准备好
-		pathfinder.Pathfinder_TaskScheduler();								// 进行一次调度
-		qMatrix_t jointQTarget;
-		pathfinder.Pathfinder_GetQMat(jointQTarget);						// 获取目标Q矩阵
-		robotarm.Robotarm_SetQMatTarget(jointQTarget);
+//		pathfinder.Pathfinder_SetTask(PATHFINDER_SILVER_ORE_PICK_PRIORITY);	// 设置当前任务
+//		pathfinder.Pathfinder_CheckReady(jointQNow);						// 检查是否准备好
+//		pathfinder.Pathfinder_TaskScheduler();								// 进行一次调度
+//		qMatrix_t jointQTarget;
+//		pathfinder.Pathfinder_GetQMat(jointQTarget);						// 获取目标Q矩阵
+//		robotarm.Robotarm_SetQMatTarget(jointQTarget);
 		
 //		robotarm.Robotarm_SetEndPosNRpyTarget(endPosNRpyTarget);	// 设置末端位姿 （rpy型）
-//		robotarm.Robotarm_IKineGeo();
-//		robotarm.Robotarm_FKine();									// 获得当前末端位姿 （rpy型）
+		robotarm.Robotarm_IKineGeo();
+		robotarm.Robotarm_FKine();									// 获得当前末端位姿 （rpy型）
 ////		
 //		robotarm.Robotarm_GetEndPosNRpyNow(endPosNRpyNow);		
 //		qMatrix_t qNow;
@@ -346,6 +348,7 @@ void Cammand_Task(void const * argument)
 			robotarm.DR16.Task_Alive_PeriodElapsedCallback();
 			robotarm.Referee.Task_Alive_PeriodElapsedCallback();
 		}
+		buzzer_taskScheduler(&buzzer);
 		//设置目标位姿
 		robotarm.Task_Control_Robotarm();
 		osDelay(2);
@@ -386,7 +389,9 @@ void init()
 	// 初始化机械臂
 	robotarm.Robotarm_Init();
 	pathfinder.Pathfinder_Init();
-	
+	// 初始化蜂鸣器
+	buzzer_init_example();
+	buzzer_setTask(&buzzer, BUZZER_DJI_STARTUP_PRIORITY);
 //	Icac_HandleInit();
 	
 }

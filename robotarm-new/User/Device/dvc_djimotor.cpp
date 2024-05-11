@@ -699,7 +699,7 @@ void DjiMotor_Init(void)
 	// 关节6 电机初始化
 	m2006_joint6.PID_Angle.Init(0.7f, 0.0f, 0.00f, 0.0f, 1.0f * PI, 1.0f * PI);
 	m2006_joint6.PID_Omega.Init(5000.0f, 0.0f, 0.0000f, 0, m2006_joint6.Get_Output_Max(), m2006_joint6.Get_Output_Max());
-	m2006_joint6.Init(&hcan1, DJI_Motor_ID_0x203);
+	m2006_joint6.Init(&hcan1, DJI_Motor_ID_0x203, DJI_Motor_Control_Method_ANGLE, 36.f);
 	m2006_joint6.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_ANGLE);
 	m2006_joint6.PID_Omega.Set_Out_Max(10000);
 }

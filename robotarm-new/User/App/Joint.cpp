@@ -531,8 +531,8 @@ JOINT_RETURN_T revoluteJoint_c::jointCalibrate(DM_motor_t* DmMotor)
 	}
 	// 转矩很大，可能堵转了，需要减小变化角度
 	float slowerCoeff = 1.f;
-	if (fabs(DmMotor_GetTorqueSi(DmMotor)) > 1.5f)
-		slowerCoeff = 5.f;
+	if (fabs(DmMotor_GetTorqueSi(DmMotor)) > 1.f)
+		slowerCoeff = 7.f;
 	// 根据校准角度选择策略
 	switch(caliDir)
 	{
@@ -557,6 +557,18 @@ JOINT_RETURN_T revoluteJoint_c::jointCalibrate(DM_motor_t* DmMotor)
 		return JOINT_OK;
 	}
 	return ret;
+	
+//	// 输出绝对值编码器，直接写入角度，转到预定角度就返回校准完毕
+//	JOINT_RETURN_T ret = JOINT_ERROR;
+//	calibratedPositionRad = -0.49;
+//	float currentPos = DmMotor_GetOutputPositionRad(DmMotor);	// 获取当前角度
+//	if (fabs(currentPos - calibratedPositionRad)<caliOmeDiffTolerance)
+//		ret = JOINT_OK;
+//	DM_motor_posVelModeCommand_t caliCommand;
+//	caliCommand.targetPosition	= calibratedPositionRad;
+//	caliCommand.targetVelocity	= caliOmegaRadPerSec;
+//	DM_motor_setPosVelControl(DmMotor, caliCommand);
+//	return ret;
 }
 
 /**

@@ -228,9 +228,9 @@ class robotarm_c{
 		algSmoothen_uniformSmoothen_t dRotSmoothen;
 		// 金妈逆解算的成员
 		float Joint_World_Angle[5] = {0.0f};	//Joint坐标系角度
-		Position_Orientation_t posNPyrTarget = {526.32, -10.288, 127.45};
+		Position_Orientation_t posNPyrTarget = {326.32, -10.288, 127.45};
 		float targetHeight = 0;
-		//Position_Orientation_t Last_Correct_Position_Orientation= {526.32, -10.288, 127.45};
+		//Position_Orientation_t Last_Correct_Position_Orientation= {326.32, -10.288, 127.45};
 		// 金妈双板通讯的成员
 		//底盘移动结构体
 		Chassis_Move_t Chassis_Move;

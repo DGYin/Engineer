@@ -323,7 +323,7 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>1</wLevel>
+            <wLevel>3</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
@@ -1785,6 +1785,11 @@
               <FileType>8</FileType>
               <FilePath>..\User\App\robotarm_shortcut.cpp</FilePath>
             </File>
+            <File>
+              <FileName>buzzer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\App\buzzer.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1804,6 +1809,11 @@
               <FileName>bsp_dwt.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\Bsp\bsp_dwt.c</FilePath>
+            </File>
+            <File>
+              <FileName>buzzer_bsp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Bsp\buzzer_bsp.c</FilePath>
             </File>
           </Files>
         </Group>

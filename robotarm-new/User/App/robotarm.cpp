@@ -1,5 +1,5 @@
 #include "robotarm.hpp"
-
+#include "buzzer.h"
 
 robotarm_c robotarm;
 
@@ -53,7 +53,7 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_QNowUpdate()
 	return ret;
 }
 
-float targetHeight = 0.05f;
+float targetAngle = 0.05f;
 float nowHeight;
 float qTar[6];
 ROBOTARM_RETURN_T robotarm_c::Robotarm_DoJointControl()
@@ -61,13 +61,13 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_DoJointControl()
 	ROBOTARM_RETURN_T ret = ROBOTARM_OK;
 	if (armCalibrated == ROBOTARM_CALIBRATED)	// 完成校准后，关节才受这里的控制
 	{
-//		priJoint1.setBodyFrameJointDisplacement(jointQTarget[1-1]);
-//		revJoint2.setBodyFrameJointAngle(jointQTarget[2-1]);
-//		revJoint3.setBodyFrameJointAngle(jointQTarget[3-1]);
-//		revJoint4.setBodyFrameJointAngle(jointQTarget[4-1]);
+		priJoint1.setBodyFrameJointDisplacement(jointQTarget[1-1]);
+		revJoint2.setBodyFrameJointAngle(jointQTarget[2-1]);
+		revJoint3.setBodyFrameJointAngle(jointQTarget[3-1]);
+		revJoint4.setBodyFrameJointAngle(jointQTarget[4-1]);
 //		revJoint5.setBodyFrameJointAngle(jointQTarget[5-1]);	
 //		revJoint6.setBodyFrameJointAngle(-PI/4);
-//		revJoint6.setBodyFrameJointAngle(0);
+//		revJoint6.setBodyFrameJointAngle(targetAngle);
 		for (int i=0; i<6; i++)
 			qTar[i] = jointQTarget[i];
 	}
@@ -248,7 +248,7 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_IKineGeo()
 	float Arm2_Length = 215.0f;		//连杆2长度(mm)
 	float Arm2_Length_2 = Arm2_Length*Arm2_Length;	//连杆2长度平方(mm)
 	float Arm1_Length_multiply_Arm2_Length = 2*Arm1_Length*Arm2_Length;	//连杆1长度*连杆2长度(mm)
-	float Arm3_Length = 226.0f;		//连杆3长度(mm)
+	float Arm3_Length = 0.1f;		//连杆3长度(mm)
 	float Joint4_Height = 95.0f;	//Joint4高度(mm)
 	float Joint_Limit_Angle[2][5] = {{	-revJoint2.GetCwLimit(),
 										-revJoint3.GetCwLimit(),
@@ -285,7 +285,7 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_IKineGeo()
 //						endPosNRpyTarget[4],	// Yaw
 //						endPosNRpyTarget[5]};	// Roll
 	
-	//posNPyrTarget = 	{526.32, -10.288, 127.45, 0, 0, 0};
+	//posNPyrTarget = 	{326.32, -10.288, 127.45, 0, 0, 0};
 	float temp_angle = (posNPyrTarget.Yaw_Angle);
 	
 	float endTargetLength = sqrt(Position_Rotation.X_Position*Position_Rotation.X_Position + Position_Rotation.Y_Position*Position_Rotation.Y_Position);
@@ -429,15 +429,15 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_CheckforCalibration()
 	uint8_t caliStatus = 0;
 	if (armCalibrated == ROBOTARM_UNCALIBRATED)
 	{
-//		caliStatus |= priJoint1.jointDoCalibrate(JOINT_CALI_DIRECTION_BACKWARD);
-//		caliStatus |= revJoint2.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
-//		caliStatus |= revJoint3.jointDoCalibrate(JOINT_CALI_DIRECTION_CW);
-//		caliStatus |= revJoint4.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
+		buzzer_setTask(&buzzer, BUZZER_CALIBRATING_PRIORITY);
+		caliStatus |= priJoint1.jointDoCalibrate(JOINT_CALI_DIRECTION_BACKWARD);
+		caliStatus |= revJoint2.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
+		caliStatus |= revJoint3.jointDoCalibrate(JOINT_CALI_DIRECTION_CW);
+		caliStatus |= revJoint4.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
 //		caliStatus |= revJoint5.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
 //		caliStatus |= revJoint6.jointDoCalibrate(JOINT_CALI_DIRECTION_CW);
 		armCalibrated = (ROBOTARM_CALIBRATE_STATUS_T) caliStatus;
 	}
-	
 	return ret;
 }
 
@@ -519,8 +519,8 @@ void robotarm_c::Task_Control_Robotarm()
 						HAL_GPIO_WritePin(GPIOI, GPIO_PIN_7, GPIO_PIN_SET);
 						// 标记回到默认位置
 						qTargetMutex = ROBOTARM_MUTEX_OCCUPIED;
-						posNPyrTarget = {526.32, -10.288, 127.45};
-						Last_Correct_Position_Orientation = {526.32, -10.288, 127.45};
+						posNPyrTarget = {326.32, -10.288, 127.45};
+						Last_Correct_Position_Orientation = {326.32, -10.288, 127.45};
 						for (int i=0; i<6; i++)
 							jointQTarget[i] = lDefQ[i];
 					break;
@@ -538,8 +538,8 @@ void robotarm_c::Task_Control_Robotarm()
 					case DR16_Switch_Status_DOWN:
 						// 标记回到默认位置
 						qTargetMutex = ROBOTARM_MUTEX_OCCUPIED;
-						posNPyrTarget = {526.32, -10.288, 127.45};
-						Last_Correct_Position_Orientation = {526.32, -10.288, 127.45};
+						posNPyrTarget = {326.32, -10.288, 127.45};
+						Last_Correct_Position_Orientation = {326.32, -10.288, 127.45};
 						for (int i=0; i<6; i++)
 							jointQTarget[i] = rDefQ[i];
 						HAL_GPIO_WritePin(GPIOI, GPIO_PIN_7, GPIO_PIN_RESET);
