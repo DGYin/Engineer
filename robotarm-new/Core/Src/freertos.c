@@ -127,7 +127,7 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(MotorTask, Motor_Task, osPriorityNormal, 0, 512);
   MotorTaskHandle = osThreadCreate(osThread(MotorTask), NULL);
   
-  osThreadDef(RobotarmTask, RobotarmResolution_Task, osPriorityAboveNormal, 0, 4*1024);
+  osThreadDef(RobotarmTask, RobotarmResolution_Task, osPriorityAboveNormal, 0, 3*1024);
   RobotarmTaskHandle = osThreadCreate(osThread(RobotarmTask), NULL);
   
   osThreadDef(CammandTask, Cammand_Task, osPriorityNormal, 0, 128);

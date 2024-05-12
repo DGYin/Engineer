@@ -51,7 +51,9 @@ VOFA_RETURN_T Vofa_InitExample(vofa_t *vofa) {
  */
 VOFA_RETURN_T Vofa_JustFloatInSeperatedChannelTransmit(vofa_t *vofa,
                                                        float *pFloat,
-                                                       uint8_t floatNum) {
+                                                       uint8_t floatNum) 
+{
+	VOFA_RETURN_T ret;
   // 创建发送数组，里面装着使用串口发送的原始数据。
   uint16_t transSize = floatNum * sizeof(float) + 4;
   uint8_t temp[transSize];
@@ -64,6 +66,8 @@ VOFA_RETURN_T Vofa_JustFloatInSeperatedChannelTransmit(vofa_t *vofa,
   // 调用发送。
   vofa->parameter.ctx.pPlatformTransmit(vofa->parameter.ctx.peripheral_handle,
                                         temp, transSize);
+	return ret;
+														   
 }
 
 /* Platform functions -------------------------------------------------------*/

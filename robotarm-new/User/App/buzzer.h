@@ -33,7 +33,7 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "buzzer_bsp.h"
 #include <stdint.h>
-
+#include "cmsis_os.h"
 // 用于规定各种蜂鸣器发声任务优先级，优先进行高优先级的发声任务
 // （数字越小优先级越高）
 typedef uint8_t BUZZER_BEEP_TASK_TO_PRIORITY_LUT_T; enum 
@@ -41,8 +41,9 @@ typedef uint8_t BUZZER_BEEP_TASK_TO_PRIORITY_LUT_T; enum
 	BUZZER_FORCE_STOP_PRIORITY		= 0,
 	BUZZER_DJI_STARTUP_PRIORITY		= 1,
 	BUZZER_DEVICE_OFFLINE_PRIORITY	= 2,
-	BUZZER_CALIBRATING_PRIORITY		= 5,
-	BUZZER_CALIBRATED_PRIORITY		= 6, 
+	BUZZER_CALIBRATED_PRIORITY		= 5, 
+	BUZZER_CALIBRATING_PRIORITY		= 6,
+
   BUZZER_FREE_PRIORITY				= BUZZER_MAX_PRIORITY_NUM, // 空闲状态
 };
 

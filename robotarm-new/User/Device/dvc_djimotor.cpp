@@ -407,7 +407,7 @@ void Class_DJI_Motor_C610::Data_Process()
     Data.Total_Encoder = Data.Total_Round * Encoder_Num_Per_Round + tmp_encoder;
 
     //计算电机本身信息
-    Data.Now_Angle = (float)Data.Total_Encoder / (float)Encoder_Num_Per_Round * 360.0f / Gearbox_Rate;
+    Data.Now_Angle = (float)Data.Total_Encoder / (float)Encoder_Num_Per_Round * PI*2.f / Gearbox_Rate;
     Data.Now_Omega = (float)tmp_omega * RPM_TO_RADPS / Gearbox_Rate;
     Data.Now_Torque = tmp_torque;
     Data.Now_Temperature = tmp_temperature;
@@ -697,8 +697,8 @@ void DjiMotor_Init(void)
 	m3508_joint5.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_ANGLE);
 	m3508_joint5.PID_Omega.Set_Out_Max(16384);
 	// 关节6 电机初始化
-	m2006_joint6.PID_Angle.Init(0.7f, 0.0f, 0.00f, 0.0f, 1.0f * PI, 1.0f * PI);
-	m2006_joint6.PID_Omega.Init(5000.0f, 0.0f, 0.0000f, 0, m2006_joint6.Get_Output_Max(), m2006_joint6.Get_Output_Max());
+	m2006_joint6.PID_Angle.Init(3.f, 1.0f, 0.00f, 0.0f, 2.0f * PI, 5.0f * PI);
+	m2006_joint6.PID_Omega.Init(5000.0f, 3000.0f, 0.0000f, 0, m2006_joint6.Get_Output_Max(), m2006_joint6.Get_Output_Max());
 	m2006_joint6.Init(&hcan1, DJI_Motor_ID_0x203, DJI_Motor_Control_Method_ANGLE, 36.f);
 	m2006_joint6.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_ANGLE);
 	m2006_joint6.PID_Omega.Set_Out_Max(10000);

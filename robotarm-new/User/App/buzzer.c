@@ -128,6 +128,7 @@ BUZZER_RETURN_T buzzer_init_example(void)
 		buzzer_init_param.arr		= htim1.Instance->ARR;
 		buzzer_handleInit(&buzzer, buzzer_init_param);
 	#endif
+	return BUZZER_OK;
 }
 
 /* Private functions -----------------------------------------------------------*/
@@ -147,6 +148,7 @@ BUZZER_RETURN_T buzzer_playDjiStartUp(buzzer_t *buzzer)
 		buzzer_setState(buzzer, BUZZER_SWITCH_OFF);
 	else if (!buzzerBsp_checkTickTolerance(BUZZER_DJI_STARTUP_STEP5_BUZZER_RELEASE, wait, BUZZER_TASK_TICK_DIFFERENCE_TOLERANCE))
 		buzzer->status.currentTask = BUZZER_FREE_PRIORITY; // 任务完成，释放优先级
+	return BUZZER_OK;
 }
 
 BUZZER_RETURN_T buzzer_playCalibrating(buzzer_t *buzzer)
@@ -162,6 +164,7 @@ BUZZER_RETURN_T buzzer_playCalibrating(buzzer_t *buzzer)
 		buzzer_setState(buzzer, BUZZER_SWITCH_OFF);
 	else if (!buzzerBsp_checkTickTolerance(BUZZER_CALIBRATING_STEP4_BUZZER_RELEASE, wait, BUZZER_TASK_TICK_DIFFERENCE_TOLERANCE))
 		buzzer->status.currentTask = BUZZER_FREE_PRIORITY; // 任务完成，释放优先级
+	return BUZZER_OK;
 }
 
 BUZZER_RETURN_T buzzer_playCalibrated(buzzer_t *buzzer)
@@ -177,6 +180,7 @@ BUZZER_RETURN_T buzzer_playCalibrated(buzzer_t *buzzer)
 		buzzer_setState(buzzer, BUZZER_SWITCH_OFF);
 	else if (!buzzerBsp_checkTickTolerance(BUZZER_CALIBRATED_STEP4_BUZZER_RELEASE, wait, BUZZER_TASK_TICK_DIFFERENCE_TOLERANCE))
 		buzzer->status.currentTask = BUZZER_FREE_PRIORITY; // 任务完成，释放优先级
+	return BUZZER_OK;
 }
 
 BUZZER_RETURN_T buzzer_playDeviceOffline(buzzer_t *buzzer)
@@ -192,6 +196,7 @@ BUZZER_RETURN_T buzzer_playDeviceOffline(buzzer_t *buzzer)
 		buzzer_setState(buzzer, BUZZER_SWITCH_OFF);
 	else if (!buzzerBsp_checkTickTolerance(BUZZER_DEVICE_OFFLINE_STEP4_BUZZER_RELEASE, wait, BUZZER_TASK_TICK_DIFFERENCE_TOLERANCE))
 		buzzer->status.currentTask = BUZZER_FREE_PRIORITY; // 任务完成，释放优先级
+	return BUZZER_OK;
 
 }
 
@@ -205,6 +210,7 @@ BUZZER_RETURN_T buzzer_handleInit(buzzer_t *buzzer, buzzer_parameter_t param)
 	buzzer->parameter.ctx.get_tick		= platform_getMsTick;
 	buzzer->parameter.ctx.set_freq		= platform_setFreq;
 	buzzer->parameter.ctx.set_switch	= platform_setSwitch;
+	return BUZZER_OK;
 }
 
 /* Bsp interaction functions ------------------------------------------------------*/

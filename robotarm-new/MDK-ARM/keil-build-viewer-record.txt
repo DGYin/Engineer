@@ -3,7 +3,7 @@
        658          0          0          0          0          0   ak_motor_bsp.o
        974          0          0          0          0          0   alg_pid.o
         74          0          0          0          0          0   alg_smoothen.o
-      1794          0          0          0         36          0   buzzer.o
+      1784          0          0          0         36          0   buzzer.o
        132          0          0          0          0          0   buzzer_bsp.o
        584          0          0          0         84          0   can.o
        478          0          0          0          0          0   chassis_communication.o
@@ -14,19 +14,19 @@
        726          0          0          0        232          0   drv_can.o
        228          0          0          0          0          0   drv_math.o
        770          0          0          0       3144          0   drv_uart.o
-      3066          0          4          0        764          0   dvc_djimotor.o
+      3078          0          4          0        764          0   dvc_djimotor.o
       1082          0          0          0          0          0   dvc_dr16.o
        284          0          0          0          0          0   dvc_referee.o
        430          0        205          0        636          0   freertos.o
        302          0          0          0          0          0   gpio.o
       1084          0          0          0      25376          0   heap_4.o
-      4680          0          0          0          0          0   joint.o
+      3682          0          0          0          0          0   joint.o
        296          0          0          0          0          0   list.o
        296          0          0          0          0          0   main.o
         78          0          4          0         40          0   pathfinder.o
       1128          0          0          4          5          0   port.o
       3216          0          0          0          0          0   queue.o
-      8294          0          4         72       1753          0   robotarm.o
+      8260          0          4         72       1758          0   robotarm.o
       2684          0          0          0          0          0   robotics.o
         64          0        392          0      36864          0   startup_stm32f407xx.o
        158          0          0          5          4          0   stm32f4xx_hal.o
@@ -66,9 +66,9 @@ Memory Map of the image
 
 	Load Region LR_IROM1 
 
-		Execution Region ER_IROM1 (Exec base: 0x08000000, Size: 0x00018184, Max: 0x00100000, END)
+		Execution Region ER_IROM1 (Exec base: 0x08000000, Size: 0x00017D6C, Max: 0x00100000, END)
 
-		Execution Region RW_IRAM1 (Exec base: 0x20000000, Size: 0x00013268, Max: 0x0001C000, END)
+		Execution Region RW_IRAM1 (Exec base: 0x20000000, Size: 0x00013270, Max: 0x0001C000, END)
 
 		Execution Region RW_IRAM2 (Exec base: 0x2001C000, Size: 0x00000000, Max: 0x00004000, END)
 

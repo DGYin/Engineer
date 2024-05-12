@@ -462,10 +462,10 @@ JOINT_RETURN_T revoluteJoint_c::setBodyFrameJointAngle(float targetRad)
 	switch(caliDir)
 	{
 		case JOINT_CALI_DIRECTION_CCW:
-			targetRad = calibratedPositionRad - (ccwMechLimitRad - targetRad*reductionRate);
+			targetRad = calibratedPositionRad - (ccwMechLimitRad - targetRad)*reductionRate;
 			break;
 		case JOINT_CALI_DIRECTION_CW:
-			targetRad = calibratedPositionRad + targetRad*reductionRate + cwMechLimitRad;
+			targetRad = calibratedPositionRad + (targetRad + cwMechLimitRad)*reductionRate;
 			break;
 		default:
 			return ret = JOINT_ERROR;
@@ -696,7 +696,7 @@ JOINT_RETURN_T revoluteJoint_c::jointCalibrate(Class_DJI_Motor_C610* djiC610Moto
 			break;
 		case JOINT_CALI_DIRECTION_CW:
 			djiC610Motor->Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_OMEGA);
-			djiC610Motor->Set_Target_Omega(reductionRate*caliOmegaRadPerSec);		// 有传动反向
+			djiC610Motor->Set_Target_Omega(-reductionRate*caliOmegaRadPerSec);		// 有传动反向
 			break;
 		default:
 			return ret;

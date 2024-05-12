@@ -23,7 +23,7 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_Init()
 	revJoint3.jointSetMechLimit(179.85f*DEGREE_TO_RAD,	135.00f*DEGREE_TO_RAD);
 	revJoint4.jointSetMechLimit(109.88f*DEGREE_TO_RAD,	109.88f*DEGREE_TO_RAD);
 	revJoint5.jointSetMechLimit(90.00*DEGREE_TO_RAD,	90.00*DEGREE_TO_RAD);
-	revJoint6.jointSetMechLimit(207.541f*DEGREE_TO_RAD,	40.6f*DEGREE_TO_RAD);
+	revJoint6.jointSetMechLimit(95.0*DEGREE_TO_RAD,		0.0f*DEGREE_TO_RAD);
 	// 缓动初始化
 	AlgSmoothen_UsHanldeInitExample(&dPosSmoothen, UNIFORM_SMOOTHEN_TYPE_RELATIVE);
 	AlgSmoothen_SetUsDelta(&dPosSmoothen, dPosMax, dPosMax);
@@ -53,7 +53,7 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_QNowUpdate()
 	return ret;
 }
 
-float targetAngle = 0.05f;
+float targetAngle = 0.f;
 float nowHeight;
 float qTar[6];
 ROBOTARM_RETURN_T robotarm_c::Robotarm_DoJointControl()
@@ -61,13 +61,13 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_DoJointControl()
 	ROBOTARM_RETURN_T ret = ROBOTARM_OK;
 	if (armCalibrated == ROBOTARM_CALIBRATED)	// 完成校准后，关节才受这里的控制
 	{
-		priJoint1.setBodyFrameJointDisplacement(jointQTarget[1-1]);
-		revJoint2.setBodyFrameJointAngle(jointQTarget[2-1]);
-		revJoint3.setBodyFrameJointAngle(jointQTarget[3-1]);
-		revJoint4.setBodyFrameJointAngle(jointQTarget[4-1]);
+//		priJoint1.setBodyFrameJointDisplacement(jointQTarget[1-1]);
+//		revJoint2.setBodyFrameJointAngle(jointQTarget[2-1]);
+//		revJoint3.setBodyFrameJointAngle(jointQTarget[3-1]);
+//		revJoint4.setBodyFrameJointAngle(jointQTarget[4-1]);
 //		revJoint5.setBodyFrameJointAngle(jointQTarget[5-1]);	
 //		revJoint6.setBodyFrameJointAngle(-PI/4);
-//		revJoint6.setBodyFrameJointAngle(targetAngle);
+		revJoint6.setBodyFrameJointAngle(targetAngle);
 		for (int i=0; i<6; i++)
 			qTar[i] = jointQTarget[i];
 	}
@@ -425,18 +425,27 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_IKineGeo()
 ROBOTARM_RETURN_T robotarm_c::Robotarm_CheckforCalibration()
 {
 	ROBOTARM_RETURN_T ret = ROBOTARM_OK;
+	
+	static uint8_t calibratedFinished;	// 只响一次
 	// 执行校准。关节校准没完成返回值为1。取或，任何一个关节没校准完都会变成1（即ROBOTARM_UNCALIBRATED）
 	uint8_t caliStatus = 0;
 	if (armCalibrated == ROBOTARM_UNCALIBRATED)
 	{
+		calibratedFinished = 0;
 		buzzer_setTask(&buzzer, BUZZER_CALIBRATING_PRIORITY);
-		caliStatus |= priJoint1.jointDoCalibrate(JOINT_CALI_DIRECTION_BACKWARD);
-		caliStatus |= revJoint2.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
-		caliStatus |= revJoint3.jointDoCalibrate(JOINT_CALI_DIRECTION_CW);
-		caliStatus |= revJoint4.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
+//		caliStatus |= priJoint1.jointDoCalibrate(JOINT_CALI_DIRECTION_BACKWARD);
+//		caliStatus |= revJoint2.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
+//		caliStatus |= revJoint3.jointDoCalibrate(JOINT_CALI_DIRECTION_CW);
+//		caliStatus |= revJoint4.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
 //		caliStatus |= revJoint5.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
-//		caliStatus |= revJoint6.jointDoCalibrate(JOINT_CALI_DIRECTION_CW);
+		caliStatus |= revJoint6.jointDoCalibrate(JOINT_CALI_DIRECTION_CW);
 		armCalibrated = (ROBOTARM_CALIBRATE_STATUS_T) caliStatus;
+	}
+	
+	if (armCalibrated==ROBOTARM_CALIBRATED && !calibratedFinished)
+	{
+		buzzer_setTask(&buzzer, BUZZER_CALIBRATED_PRIORITY);
+		calibratedFinished++;
 	}
 	return ret;
 }
