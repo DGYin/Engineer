@@ -993,6 +993,11 @@
               <FileType>8</FileType>
               <FilePath>..\User\Device\dvc_dmmotor.cpp</FilePath>
             </File>
+            <File>
+              <FileName>dvc_pump.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Device\dvc_pump.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1789,6 +1794,11 @@
               <FileName>buzzer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\App\buzzer.c</FilePath>
+            </File>
+            <File>
+              <FileName>uniTrans.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\App\uniTrans.c</FilePath>
             </File>
           </Files>
         </Group>

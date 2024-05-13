@@ -35,10 +35,10 @@
 
 [region info]
 [load region] LR_IROM1
-	[execution region] ER_IROM1, 0x08000000, 0x00100000, 0x00017D6C [memory type] 2 [memory ID] 4
+	[execution region] ER_IROM1, 0x08000000, 0x00100000, 0x00017F6C [memory type] 2 [memory ID] 4
 
-	[execution region] RW_IRAM1, 0x20000000, 0x0001C000, 0x00013270 [memory type] 1 [memory ID] 2
-		[ZI block] addr: 0x20000148, size: 0x00013128 (78120)
+	[execution region] RW_IRAM1, 0x20000000, 0x0001C000, 0x00013288 [memory type] 1 [memory ID] 2
+		[ZI block] addr: 0x20000148, size: 0x00013140 (78144)
 
 	[execution region] RW_IRAM2, 0x2001C000, 0x00004000, 0x00000000 [memory type] 1 [memory ID] 2
 
@@ -64,6 +64,7 @@
 [object name] drv_uart.o                     [path] ..\User\Middleware\Driver\drv_uart.c
 [object name] dvc_djimotor.o                 [path] ..\User\Device\dvc_djimotor.cpp
 [object name] dvc_dr16.o                     [path] ..\User\Device\dvc_dr16.cpp
+[object name] dvc_pump.o                     [path] ..\User\Device\dvc_pump.c
 [object name] dvc_referee.o                  [path] ..\User\Device\dvc_referee.cpp
 [object name] freertos.o                     [path] ../Core/Src/freertos.c
 [object name] gpio.o                         [path] ../Core/Src/gpio.c
@@ -161,6 +162,7 @@
 [old name] dvc_dr16.cpp                   [type] 1   [path] ..\User\Device\dvc_dr16.cpp
 [old name] dvc_referee.cpp                [type] 1   [path] ..\User\Device\dvc_referee.cpp
 [old name] dvc_dmmotor.cpp                [type] 1   [path] ..\User\Device\dvc_dmmotor.cpp
+[old name] dvc_pump.c                     [type] 1   [path] ..\User\Device\dvc_pump.c
 [old name] tsk_config_and_callback.cpp    [type] 1   [path] ..\User\Task\tsk_config_and_callback.cpp
 [old name] chassis_Communication.cpp      [type] 1   [path] ..\User\Task\chassis_Communication.cpp
 [old name] croutine.c                     [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/croutine.c
@@ -183,6 +185,7 @@
 [old name] vofa.c                         [type] 1   [path] ..\User\App\vofa.c
 [old name] robotarm_shortcut.cpp          [type] 1   [path] ..\User\App\robotarm_shortcut.cpp
 [old name] buzzer.c                       [type] 1   [path] ..\User\App\buzzer.c
+[old name] uniTrans.c                     [type] 1   [path] ..\User\App\uniTrans.c
 [old name] AK_motor_bsp.c                 [type] 1   [path] ..\User\Bsp\AK_motor_bsp.c
 [old name] DM_motor_bsp.c                 [type] 1   [path] ..\User\Bsp\DM_motor_bsp.c
 [old name] bsp_dwt.c                      [type] 1   [path] ..\User\Bsp\bsp_dwt.c
@@ -198,8 +201,8 @@
 
 [record region info]
 [load region] LR_IROM1
-	[execution region] ER_IROM1, 0x08000000, 0x00100000, 0x00017D64 [type] 2 [ID] 4
-	[execution region] RW_IRAM1, 0x20000000, 0x0001C000, 0x00013270 [type] 1 [ID] 2
+	[execution region] ER_IROM1, 0x08000000, 0x00100000, 0x0001848C [type] 2 [ID] 4
+	[execution region] RW_IRAM1, 0x20000000, 0x0001C000, 0x00013288 [type] 1 [ID] 2
 	[execution region] RW_IRAM2, 0x2001C000, 0x00004000, 0x00000000 [type] 1 [ID] 2
 ------------------------------------------------------------------------------------------------------------------------------------
                                    FILE(s)                                   |         RAM (byte)       |       FLASH (byte)       |
@@ -219,19 +222,20 @@
 ..\User\Middleware\Driver\drv_can.c():                                       |         232              |         726              |
 ..\User\Middleware\Driver\drv_math.cpp():                                    |           0              |         228              |
 ..\User\Middleware\Driver\drv_uart.c():                                      |        3144              |         770              |
-..\User\Device\dvc_djimotor.cpp():                                           |         764              |        3082              |
+..\User\Device\dvc_djimotor.cpp():                                           |         764              |        2998              |
 ..\User\Device\dvc_dr16.cpp():                                               |           0              |        1082              |
+..\User\Device\dvc_pump.c():                                                 |          32              |         286              |
 ..\User\Device\dvc_referee.cpp():                                            |           0              |         284              |
 ../Core/Src/freertos.c():                                                    |         636              |         635              |
-../Core/Src/gpio.c():                                                        |           0              |         302              |
+../Core/Src/gpio.c():                                                        |           0              |         388              |
 ../Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c():      |       25376              |        1084              |
-..\User\App\Joint.cpp():                                                     |           0              |        3682              |
+..\User\App\Joint.cpp():                                                     |           0              |        3816  [-1100]     |
 ../Middlewares/Third_Party/FreeRTOS/Source/list.c():                         |           0              |         296              |
 ../Core/Src/main.c():                                                        |           0              |         296              |
-..\User\App\pathfinder.cpp():                                                |          40              |          82              |
+..\User\App\pathfinder.cpp():                                                |          40              |          58              |
 ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/port.c():  |           9              |        1132              |
 ../Middlewares/Third_Party/FreeRTOS/Source/queue.c():                        |           0              |        3216              |
-..\User\App\robotarm.cpp():                                                  |        1830              |        8336  [+14]       |
+..\User\App\robotarm.cpp():                                                  |        1826              |        8452  [-204]      |
 ..\User\Middleware\Algorithm\robotics.cpp():                                 |           0              |        2684              |
 startup_stm32f407xx.s():                                                     |       36864              |         456              |
 ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c():                       |           9              |         163              |
@@ -252,7 +256,7 @@ startup_stm32f407xx.s():                                                     |  
 ../Core/Src/system_stm32f4xx.c():                                            |           4              |          46              |
 ../Middlewares/Third_Party/FreeRTOS/Source/tasks.c():                        |         460              |        4585              |
 ../Core/Src/tim.c():                                                         |         144              |         542              |
-..\User\Task\tsk_config_and_callback.cpp():                                  |           4              |        1258              |
+..\User\Task\tsk_config_and_callback.cpp():                                  |           4              |        1250              |
 ../Core/Src/usart.c():                                                       |         696              |        1234              |
 ../USB_DEVICE/App/usb_device.c():                                            |         732              |         118              |
 ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c():       |         136              |        2642              |
@@ -277,11 +281,11 @@ LR_IROM1
                 NULL
  
         FLASH 1           [0x08000000 | 0x00100000 (1048576)]
-                ER_IROM1  [0x08000000]|####______________________________________________| (  95.3 KB /   1.0 MB )   9.3%  [+8]
+                ER_IROM1  [0x08000000]|####______________________________________________| (  95.8 KB /   1.0 MB )   9.4%  [-1312]
  
 [htm file path] D:\Engineer-master\robotarm-new\MDK-ARM\robotarm\robotarm.htm
 Maximum Stack Usage =       5312 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)
  
 =============================================================================================================================
 
-run time: 0.270 s
+run time: 0.295 s

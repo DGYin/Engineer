@@ -76,20 +76,41 @@ JOINT_RETURN_T prismaticJoint_c::jointDoCalibrate(JOINT_PRISMATIC_CALI_DIRECTION
 {
 	JOINT_RETURN_T ret;
 	caliDir = __caliDir;
-	// 根据电机类型，进行校准
-	switch(motorType)
+	// 没有完成校准，才需要进行校准
+	if (caliStatus == JOINT_UNCALIBRATED)
 	{
-		case JOINT_MOTOR_DM:
-			break;
-		case JOINT_MOTOR_AK:
-			break;
-		case JOINT_MOTOR_C620:
-			ret = jointCalibrate((Class_DJI_Motor_C620*) motor);
-			break;
-		case JOINT_MOTOR_C610:
-			break;
-		default:
-			return ret = JOINT_ERROR;
+		// 根据电机类型，进行校准
+		switch(motorType)
+		{
+			case JOINT_MOTOR_DM:
+				break;
+			case JOINT_MOTOR_AK:
+				break;
+			case JOINT_MOTOR_C620:
+				ret = jointCalibrate((Class_DJI_Motor_C620*) motor);
+				break;
+			case JOINT_MOTOR_C610:
+				break;
+			default:
+				return ret = JOINT_ERROR;
+		}
+	}
+	else
+	{
+		// 根据校准方向，停在对应位置
+		switch((uint8_t) caliDir)
+		{
+			case JOINT_CALI_DIRECTION_BACKWARD:
+				setBodyFrameJointDisplacement(-GetLowerLimit());
+				break;
+			case JOINT_CALI_DIRECTION_FORWARD:
+				setBodyFrameJointDisplacement(GetUpperLimit());
+				break;
+			default:
+				ret = JOINT_ERROR;
+				break;
+		}
+		ret = JOINT_ERROR;
 	}
 	return ret;
 }
@@ -138,6 +159,7 @@ JOINT_RETURN_T prismaticJoint_c::jointCalibrate(Class_DJI_Motor_C620* djiC620Mot
 	float caliDiff = fabs(averageFilter(currentVel));	// 最近速度的均值滤波
 	if (caliDiff < caliVelocityDiffTolerance)			// 最近速度都很小，说明卡到限位了
 	{
+		caliStatus	= JOINT_CALIBRATED;		// 标记已校准
 		calibratedDisplacementSi = currentDis;	// 记录下当前位移，作为校正完成的结果
 		return JOINT_OK;
 	}
@@ -239,6 +261,11 @@ JOINT_RETURN_T prismaticJoint_c::setBodyFrameJointDisplacement(float targetDisp)
 			return ret = JOINT_ERROR;
 	}
 	return ret;
+}
+
+JOINT_CALIBRATED_STATUS_T prismaticJoint_c::jointGetCaliStatus()
+{
+	return caliStatus;
 }
 
 float prismaticJoint_c::GetUpperLimit()
@@ -378,23 +405,44 @@ JOINT_RETURN_T revoluteJoint_c::jointDoCalibrate(JOINT_REVOLUTE_CALIBRATION_DIRE
 {
 	JOINT_RETURN_T ret;
 	caliDir = __caliDir;
-	// 根据电机类型，进行校准
-	switch(motorType)
+	// 没有完成校准，才需要进行校准
+	if (caliStatus == JOINT_UNCALIBRATED)
 	{
-		case JOINT_MOTOR_DM:
-			ret = jointCalibrate((DM_motor_t*) motor);
-			break;
-		case JOINT_MOTOR_AK:
-			ret = jointCalibrate((AK_motor_t*) motor);
-			break;
-		case JOINT_MOTOR_C620:
-			ret = jointCalibrate((Class_DJI_Motor_C620*)motor);
-			break;
-		case JOINT_MOTOR_C610:
-			ret = jointCalibrate((Class_DJI_Motor_C610*)motor);
-			break;
-		default:
-			return ret = JOINT_ERROR;
+		// 根据电机类型，进行校准
+		switch(motorType)
+		{
+			case JOINT_MOTOR_DM:
+				ret = jointCalibrate((DM_motor_t*) motor);
+				break;
+			case JOINT_MOTOR_AK:
+				ret = jointCalibrate((AK_motor_t*) motor);
+				break;
+			case JOINT_MOTOR_C620:
+				ret = jointCalibrate((Class_DJI_Motor_C620*)motor);
+				break;
+			case JOINT_MOTOR_C610:
+				ret = jointCalibrate((Class_DJI_Motor_C610*)motor);
+				break;
+			default:
+				return ret = JOINT_ERROR;
+		}
+	}
+	else
+	{
+		// 根据校准方向，停在对应位置
+		switch((uint8_t) caliDir)
+		{
+			case JOINT_CALI_DIRECTION_CW:
+				setBodyFrameJointAngle(-GetCwLimit());
+				break;
+			case JOINT_CALI_DIRECTION_CCW:
+				setBodyFrameJointAngle(GetCcwLimit());
+				break;
+			default:
+				ret = JOINT_ERROR;
+				break;
+		}
+		ret = JOINT_ERROR;
 	}
 	return ret;
 }
@@ -488,18 +536,21 @@ JOINT_RETURN_T revoluteJoint_c::setBodyFrameJointAngle(float targetRad)
 															targetRad*RAD_TO_DEGREE,
 															jointOmegaMax*RAD_TO_DEGREE,
 															jointDOmegaMax*RAD_TO_DEGREE);
+			return ret;
 			break;
 		case JOINT_MOTOR_C620:
 			((Class_DJI_Motor_C620*)motor)->Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_ANGLE);
 			((Class_DJI_Motor_C620*)motor)->Set_Target_Angle(targetRad);
 			((Class_DJI_Motor_C620*)motor)->Task_PID_PeriodElapsedCallback();	// 进行一次 PID 运算
 			CAN_Send_Data(&hcan1, 0x200, CAN1_0x200_Tx_Data, 8, CAN_ID_STD);	// 进行一次 CAN 发送
+			return ret;
 			break;
 		case JOINT_MOTOR_C610:
 			((Class_DJI_Motor_C610*)motor)->Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_ANGLE);
 			((Class_DJI_Motor_C610*)motor)->Set_Target_Angle(targetRad);	// 有传动比，要反向
 			((Class_DJI_Motor_C610*)motor)->Task_PID_PeriodElapsedCallback();	// 进行一次 PID 运算
 			CAN_Send_Data(&hcan1, 0x200, CAN1_0x200_Tx_Data, 8, CAN_ID_STD);	// 进行一次 CAN 发送
+			return ret;
 			break;
 		default:
 			return ret = JOINT_ERROR;
@@ -553,6 +604,7 @@ JOINT_RETURN_T revoluteJoint_c::jointCalibrate(DM_motor_t* DmMotor)
 	float caliDiff = fabs(averageFilter(currentOme));	// 最近角速度的均值滤波
 	if (caliDiff < caliOmeDiffTolerance) // 最近角速度都很小，说明卡到限位了
 	{
+		caliStatus	= JOINT_CALIBRATED;		// 标记已校准
 		calibratedPositionRad = currentPos;	// 记录下当前角度，作为校正完成的结果
 		return JOINT_OK;
 	}
@@ -610,6 +662,7 @@ JOINT_RETURN_T revoluteJoint_c::jointCalibrate(AK_motor_t* AkMotor)
 	float caliDiff = fabs(averageFilter(currentOme));	// 最近角速度的均值滤波
 	if (caliDiff < caliOmeDiffTolerance) // 最近角速度都很小，说明卡到限位了
 	{
+		caliStatus	= JOINT_CALIBRATED;		// 标记已校准
 		calibratedPositionRad = currentPos;	// 记录下当前角度，作为校正完成的结果
 		return JOINT_OK;
 	}
@@ -658,6 +711,7 @@ JOINT_RETURN_T revoluteJoint_c::jointCalibrate(Class_DJI_Motor_C620* djiC620Moto
 	float caliDiff = fabs(averageFilter(currentOme));	// 最近角速度的均值滤波
 	if (caliDiff < caliOmeDiffTolerance) // 最近角速度都很小，说明卡到限位了
 	{
+		caliStatus	= JOINT_CALIBRATED;		// 标记已校准
 		calibratedPositionRad = currentPos;	// 记录下当前角度，作为校正完成的结果
 		return JOINT_OK;
 	}
@@ -707,12 +761,17 @@ JOINT_RETURN_T revoluteJoint_c::jointCalibrate(Class_DJI_Motor_C610* djiC610Moto
 	float caliDiff = fabs(averageFilter(currentOme));	// 最近角速度的均值滤波
 	if (caliDiff < caliOmeDiffTolerance) // 最近角速度都很小，说明卡到限位了
 	{
+		caliStatus	= JOINT_CALIBRATED;		// 标记已校准
 		calibratedPositionRad = currentPos;	// 记录下当前角度，作为校正完成的结果
 		return JOINT_OK;
 	}
 	return ret;
 }
 
+JOINT_CALIBRATED_STATUS_T revoluteJoint_c::jointGetCaliStatus()
+{
+	return caliStatus;
+}
 
 JOINT_MOTOR_CONNECTION_STATE_T revoluteJoint_c::jointGetConnectionState()
 {

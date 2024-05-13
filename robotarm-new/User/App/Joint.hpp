@@ -49,6 +49,10 @@ typedef enum{
 	JOINT_MOTOR_OFFLINE	= 0x01U,
 } JOINT_MOTOR_CONNECTION_STATE_T;
 
+typedef enum{
+	JOINT_UNCALIBRATED	= 0x00U,
+	JOINT_CALIBRATED	= 0x01U,
+} JOINT_CALIBRATED_STATUS_T;
 
 class prismaticJoint_c{	// 关节的所有位移都为 m
 	public:
@@ -56,6 +60,7 @@ class prismaticJoint_c{	// 关节的所有位移都为 m
 		JOINT_RETURN_T jointInit(Class_DJI_Motor_C620* djiC620Motor);
 		
 		JOINT_RETURN_T jointDoCalibrate(JOINT_PRISMATIC_CALI_DIRECTION_T __caliDir=JOINT_CALI_DIRECTION_BACKWARD);
+		JOINT_CALIBRATED_STATUS_T jointGetCaliStatus();	// 获取是否完成校准
 		// 设置关节位移
 		JOINT_RETURN_T setBodyFrameJointDisplacement(float targetDisp);
 		// 获得关节角度
@@ -90,6 +95,8 @@ class prismaticJoint_c{	// 关节的所有位移都为 m
 		uint8_t	averageFilterLength;		// 均值滤波长度
 		JOINT_PRISMATIC_CALI_DIRECTION_T caliDir;	// 校准时，电机从输出轴看的转动方向
 		float averageFilter(float input);
+		JOINT_CALIBRATED_STATUS_T caliStatus = JOINT_UNCALIBRATED;	// 标记是否完成校准
+		
 		JOINT_RETURN_T jointCalibrate(Class_DJI_Motor_C620* djiC620Motor);
 		// 控制相关
 		float targetPosSi;
@@ -106,6 +113,7 @@ class revoluteJoint_c{	// 关节的所有角度都为弧度
 		JOINT_RETURN_T jointInit(Class_DJI_Motor_C610* djiC610Motor);
 		
 		JOINT_RETURN_T jointDoCalibrate(JOINT_REVOLUTE_CALIBRATION_DIRECTION_T __caliDir=JOINT_CALI_DIRECTION_CCW);
+		JOINT_CALIBRATED_STATUS_T jointGetCaliStatus();	// 获取是否完成校准
 		// 设置关节角度
 		float jointOmegaMax;
 		float jointDOmegaMax;
@@ -143,6 +151,8 @@ class revoluteJoint_c{	// 关节的所有角度都为弧度
 		uint8_t	averageFilterLength;	// 均值滤波长度
 		JOINT_REVOLUTE_CALIBRATION_DIRECTION_T caliDir;	// 校准时，电机从输出轴看的转动方向
 		float averageFilter(float input);
+		JOINT_CALIBRATED_STATUS_T caliStatus = JOINT_UNCALIBRATED;	// 标记是否完成校准
+		
 		JOINT_RETURN_T jointCalibrate(DM_motor_t* DmMotor);
 		JOINT_RETURN_T jointCalibrate(AK_motor_t* AkMotor);
 		JOINT_RETURN_T jointCalibrate(Class_DJI_Motor_C620* djiC620Motor);

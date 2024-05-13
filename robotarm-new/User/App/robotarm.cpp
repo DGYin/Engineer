@@ -1,11 +1,11 @@
 #include "robotarm.hpp"
 #include "buzzer.h"
-
+#include "dvc_pump.h"
 robotarm_c robotarm;
 
 inline float Robotarm_platformSine(float input);
 inline float Robotarm_platformCosine(float input);
-
+inline float Robotarm_platformLimit(float input, float lowerLimit, float upperLimit);
 
 ROBOTARM_RETURN_T robotarm_c::Robotarm_Init()
 {
@@ -66,8 +66,8 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_DoJointControl()
 //		revJoint3.setBodyFrameJointAngle(jointQTarget[3-1]);
 //		revJoint4.setBodyFrameJointAngle(jointQTarget[4-1]);
 //		revJoint5.setBodyFrameJointAngle(jointQTarget[5-1]);	
-//		revJoint6.setBodyFrameJointAngle(-PI/4);
-		revJoint6.setBodyFrameJointAngle(targetAngle);
+//		revJoint6.setBodyFrameJointAngle(jointQTarget[6-1]);
+//		revJoint6.setBodyFrameJointAngle(targetAngle);
 		for (int i=0; i<6; i++)
 			qTar[i] = jointQTarget[i];
 	}
@@ -428,20 +428,31 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_CheckforCalibration()
 	
 	static uint8_t calibratedFinished;	// 只响一次
 	// 执行校准。关节校准没完成返回值为1。取或，任何一个关节没校准完都会变成1（即ROBOTARM_UNCALIBRATED）
-	uint8_t caliStatus = 0;
+	uint8_t caliStatus = 1;
 	if (armCalibrated == ROBOTARM_UNCALIBRATED)
 	{
+		// 发出校准声
 		calibratedFinished = 0;
 		buzzer_setTask(&buzzer, BUZZER_CALIBRATING_PRIORITY);
-//		caliStatus |= priJoint1.jointDoCalibrate(JOINT_CALI_DIRECTION_BACKWARD);
-//		caliStatus |= revJoint2.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
-//		caliStatus |= revJoint3.jointDoCalibrate(JOINT_CALI_DIRECTION_CW);
-//		caliStatus |= revJoint4.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
-//		caliStatus |= revJoint5.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
-		caliStatus |= revJoint6.jointDoCalibrate(JOINT_CALI_DIRECTION_CW);
+		// 尝试执行校准
+//		priJoint1.jointDoCalibrate(JOINT_CALI_DIRECTION_BACKWARD);
+		revJoint2.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
+//		revJoint3.jointDoCalibrate(JOINT_CALI_DIRECTION_CW);
+//		revJoint4.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
+//		revJoint5.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
+//		revJoint6.jointDoCalibrate(JOINT_CALI_DIRECTION_CW);
+		// 获取校准状态
+//		caliStatus &= priJoint1.jointGetCaliStatus();
+		caliStatus &= revJoint2.jointGetCaliStatus();
+//		caliStatus &= revJoint3.jointGetCaliStatus();
+//		caliStatus &= revJoint4.jointGetCaliStatus();
+//		caliStatus &= revJoint5.jointGetCaliStatus();
+//		caliStatus &= revJoint6.jointGetCaliStatus();
+		
 		armCalibrated = (ROBOTARM_CALIBRATE_STATUS_T) caliStatus;
 	}
 	
+	// 校准完毕
 	if (armCalibrated==ROBOTARM_CALIBRATED && !calibratedFinished)
 	{
 		buzzer_setTask(&buzzer, BUZZER_CALIBRATED_PRIORITY);
@@ -473,6 +484,8 @@ void robotarm_c::Task_Chassis_Communication_PeriodElapsedCallback()
  * @brief 遥控器控制任务
  *
  */
+
+Enum_DR16_Switch_Status lastRightSwitch; 
 void robotarm_c::Task_Control_Robotarm()
 {
 	//角度目标值
@@ -495,22 +508,31 @@ void robotarm_c::Task_Control_Robotarm()
 		dr16_yaw = (Math_Abs(DR16.Get_Yaw()) > DR16_Dead_Zone) ? DR16.Get_Yaw() : 0;
 		switch(DR16.Get_Left_Switch())
 		{
+
 			case DR16_Switch_Status_UP:
 				//底盘移动
 				switch(DR16.Get_Right_Switch())
 				{
 					case DR16_Switch_Status_UP:
-						
+						DvcPump_SetStatus(&dvcPump_suction, DVC_PUMP_ON);
 					break;
 					case DR16_Switch_Status_MIDDLE:
+						
 						posNPyrTarget.Z_Position += dr16_right_y * Robotarm_Z_Resolution;
 						Chassis_Move.Chassis_Vx = dr16_left_x * Chassis_X_Resolution;
 						Chassis_Move.Chassis_Vy = dr16_left_y * Chassis_Y_Resolution;
 						Chassis_Move.Chassis_Wz = dr16_right_x * Chassis_Z_Resolution;
 					break;
 					case DR16_Switch_Status_DOWN:
-						
+						DvcPump_SetStatus(&dvcPump_suction, DVC_PUMP_OFF);
 					break;
+					case DR16_Switch_Status_TRIG_MIDDLE_UP:
+						
+						break;
+					case DR16_Switch_Status_TRIG_UP_MIDDLE:
+						
+						break;
+					
 				}
 				if((Last_Position_Orientation != posNPyrTarget)||(Last_Chassis_Move != Chassis_Move))
 				{
@@ -521,7 +543,7 @@ void robotarm_c::Task_Control_Robotarm()
 				
 			break;
 			case DR16_Switch_Status_DOWN:
-				//机械臂移动
+				// 机械臂位置控制
 				switch(DR16.Get_Right_Switch())
 				{
 					case DR16_Switch_Status_UP:
@@ -535,14 +557,12 @@ void robotarm_c::Task_Control_Robotarm()
 					break;
 					case DR16_Switch_Status_MIDDLE:
 						qTargetMutex = ROBOTARM_MUTEX_FREE;
+						// 目标值设定
 						posNPyrTarget.X_Position += dr16_left_y * Robotarm_X_Resolution;
 						posNPyrTarget.Y_Position -= dr16_left_x * Robotarm_Y_Resolution;
-						
-						//posNPyrTarget.Pitch_Angle -= dr16_right_y * Robotarm_Pitch_Resolution;
-						posNPyrTarget.Yaw_Angle += dr16_right_x * Robotarm_Yaw_Resolution;
-						jointQTarget[0] += dr16_right_y * Robotarm_Height_Resolution;
-						if (jointQTarget[0]<priJoint1.GetLowerLimit()) jointQTarget[0] = priJoint1.GetLowerLimit();
-						if (jointQTarget[0]>priJoint1.GetUpperLimit()) jointQTarget[0] = priJoint1.GetUpperLimit();
+						jointQTarget[0]	+= dr16_right_y * Robotarm_Height_Resolution;
+						// 目标值限幅
+						Robotarm_platformLimit(jointQTarget[0], priJoint1.GetLowerLimit(), priJoint1.GetUpperLimit());
 					break;
 					case DR16_Switch_Status_DOWN:
 						// 标记回到默认位置
@@ -557,13 +577,20 @@ void robotarm_c::Task_Control_Robotarm()
 				
 			break;
 			case DR16_Switch_Status_MIDDLE:
-				//整车无力
+				// 机械臂姿态控制
 				switch(DR16.Get_Right_Switch())
 				{
 					case DR16_Switch_Status_UP:
 						
 					break;
 					case DR16_Switch_Status_MIDDLE:
+						posNPyrTarget.Pitch_Angle	+= dr16_left_y	* Robotarm_Pitch_Resolution;
+						posNPyrTarget.Yaw_Angle		-= dr16_left_x	* Robotarm_Yaw_Resolution;
+						posNPyrTarget.Roll_Angle	-= dr16_right_x	* Robotarm_Roll_Resolution;
+						// 目标值限幅
+//						Robotarm_platformLimit(posNPyrTarget.Pitch_Angle	, -revJoint6.GetCwLimit(), revJoint6.GetCcwLimit());
+//						Robotarm_platformLimit(posNPyrTarget.Yaw_Angle		, -revJoint4.GetCwLimit(), revJoint4.GetCcwLimit());
+//						Robotarm_platformLimit(posNPyrTarget.Roll_Angle		, -revJoint5.GetCwLimit(), revJoint5.GetCcwLimit());
 //						Target_Position_Orientation = {209.314f, 0 ,30.0f};
 					break;
 					case DR16_Switch_Status_DOWN:
@@ -574,6 +601,8 @@ void robotarm_c::Task_Control_Robotarm()
 			break;
 		}
 	}
+	
+	
 	if(Referee.Get_Referee_Status() == Referee_Status_ENABLE)
 	{
 		float Controller_x, Controller_y,Controller_pitch,Controller_roll,Controller_yaw;
@@ -605,8 +634,19 @@ void robotarm_c::Task_Control_Robotarm()
 }
 
 
-
-
+/**
+ * @brief 自定义 Limit 函数
+ *
+ * @param input
+ * @return float
+ */
+inline float Robotarm_platformLimit(float input, float lowerLimit, float upperLimit)
+{
+	float ret = input;
+	if (input>upperLimit) ret = upperLimit;
+	if (input<lowerLimit) ret = lowerLimit;
+	return ret;
+}
 /**
  * @brief 自定义 Sine 函数
  *

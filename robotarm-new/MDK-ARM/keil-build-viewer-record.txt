@@ -14,19 +14,20 @@
        726          0          0          0        232          0   drv_can.o
        228          0          0          0          0          0   drv_math.o
        770          0          0          0       3144          0   drv_uart.o
-      3078          0          4          0        764          0   dvc_djimotor.o
+      2994          0          4          0        764          0   dvc_djimotor.o
       1082          0          0          0          0          0   dvc_dr16.o
+       286          0          0          0         32          0   dvc_pump.o
        284          0          0          0          0          0   dvc_referee.o
        430          0        205          0        636          0   freertos.o
-       302          0          0          0          0          0   gpio.o
+       388          0          0          0          0          0   gpio.o
       1084          0          0          0      25376          0   heap_4.o
-      3682          0          0          0          0          0   joint.o
+      3816          0          0          0          0          0   joint.o
        296          0          0          0          0          0   list.o
        296          0          0          0          0          0   main.o
-        78          0          4          0         40          0   pathfinder.o
+        54          0          4          0         40          0   pathfinder.o
       1128          0          0          4          5          0   port.o
       3216          0          0          0          0          0   queue.o
-      8260          0          4         72       1758          0   robotarm.o
+      8376          0          4         72       1754          0   robotarm.o
       2684          0          0          0          0          0   robotics.o
         64          0        392          0      36864          0   startup_stm32f407xx.o
        158          0          0          5          4          0   stm32f4xx_hal.o
@@ -47,7 +48,7 @@
         18          0         24          4          0          0   system_stm32f4xx.o
       4580          0          5          0        460          0   tasks.o
        542          0          0          0        144          0   tim.o
-      1258          0          0          0          4          0   tsk_config_and_callback.o
+      1250          0          0          0          4          0   tsk_config_and_callback.o
       1234          0          0          0        696          0   usart.o
        118          0          0          0        732          0   usb_device.o
       2506          0          0        136          0          0   usbd_cdc.o
@@ -66,9 +67,9 @@ Memory Map of the image
 
 	Load Region LR_IROM1 
 
-		Execution Region ER_IROM1 (Exec base: 0x08000000, Size: 0x00017D6C, Max: 0x00100000, END)
+		Execution Region ER_IROM1 (Exec base: 0x08000000, Size: 0x00017F6C, Max: 0x00100000, END)
 
-		Execution Region RW_IRAM1 (Exec base: 0x20000000, Size: 0x00013270, Max: 0x0001C000, END)
+		Execution Region RW_IRAM1 (Exec base: 0x20000000, Size: 0x00013288, Max: 0x0001C000, END)
 
 		Execution Region RW_IRAM2 (Exec base: 0x2001C000, Size: 0x00000000, Max: 0x00004000, END)
 

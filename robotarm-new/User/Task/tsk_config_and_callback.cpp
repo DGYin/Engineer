@@ -47,7 +47,8 @@
 #include "vofa.h"
 #include "pathfinder.hpp"
 #include "buzzer.h"
-
+#include "stm32f4xx_hal_gpio.h"
+#include "dvc_pump.h"
 /* Private types -------------------------------------------------------------*/
 
 /* Private variables ---------------------------------------------------------*/
@@ -388,10 +389,14 @@ void init()
 	Vofa_InitExample(&vofa);
 	// 初始化机械臂
 	robotarm.Robotarm_Init();
-	pathfinder.Pathfinder_Init();
+	//pathfinder.Pathfinder_Init();
 	// 初始化蜂鸣器
 	buzzer_init_example();
 	buzzer_setTask(&buzzer, BUZZER_DJI_STARTUP_PRIORITY);
+	// 尝试开启继电器
+	DvcPump_InitExample();
+//	HAL_GPIO_WritePin(GPIOE, GPIO_PIN_11, GPIO_PIN_RESET);
+//	HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, GPIO_PIN_RESET);
 //	Icac_HandleInit();
 	
 }

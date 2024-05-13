@@ -29,8 +29,8 @@ typedef enum{
 } ROBOTARM_MUTEX_T;
 
 typedef enum{
-	ROBOTARM_CALIBRATED		= 0x00U,
-	ROBOTARM_UNCALIBRATED	= 0x01U,
+	ROBOTARM_UNCALIBRATED	= 0x00U,
+	ROBOTARM_CALIBRATED		= 0x01U,
 } ROBOTARM_CALIBRATE_STATUS_T;
 
 typedef enum{
@@ -154,10 +154,10 @@ const float Robotarm_Y_Resolution = 0.5f ;
 //DR16机械臂z方向灵敏度系数
 const float Robotarm_Z_Resolution = 0.4f ;
 //DR16机械臂yaw灵敏度系数
-const float Robotarm_Yaw_Resolution = 0.01f ;
+const float Robotarm_Yaw_Resolution = 0.001f ;
 //DR16机械臂pitch灵敏度系数
-const float Robotarm_Pitch_Resolution	= 0.1f ;
-const float Robotarm_Roll_Resolution	= 0.1f;
+const float Robotarm_Pitch_Resolution	= 0.001f ;
+const float Robotarm_Roll_Resolution	= 0.01f;
 //DR16机械臂roll灵敏度系数
 const float Robotarm_Height_Resolution = 0.0002f ;
 	
