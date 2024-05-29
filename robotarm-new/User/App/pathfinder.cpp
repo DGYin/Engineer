@@ -3,9 +3,11 @@
 pathfinder_c pathfinder;
 
 PATHFINDER_RETURN_T pathfinder_c::Pathfinder_Init()
+
 {
 	PATHFINDER_RETURN_T ret;
 	status.currentTask	= PATHFINDER_FREE_PRIORITY;	// 默认为空闲
+	status.lastTask		= PATHFINDER_FREE_PRIORITY;	// 默认为空闲
 	status.switching	= PATHFINDER_OFF;			// 默认为无任务状态
 	return ret = PATHFINDER_OK;
 }
@@ -147,7 +149,7 @@ PATHFINDER_RETURN_T pathfinder_c::Pathfinder_DoSilverOrePick()
 				for (int i=0; i<4; i++)	// 查表得到输出qMat
 					qMatOutput[i] = pathfinder_silverOrePick_tick2QMatLut[index*4 + i];
 				qMatOutput[4] = 0;
-				qMatOutput[5] = 0;
+				qMatOutput[5] = -PI/2.f;
 				break;	// 退出查表
 			}
 		}

@@ -1,0 +1,200 @@
+
+=================================================== keil-build-viewer v1.5b ==================================================
+ 
+[Search keil project] 1 item(s)
+	D:\Engineer-master\chassis\MDK-ARM\chassis.uvprojx
+
+[User input] 
+[Current folder] D:\Engineer-master\chassis\MDK-ARM
+[Encoding] 1252
+[Keil project path] D:\Engineer-master\chassis\MDK-ARM\chassis.uvprojx
+[Keil project name] chassis.uvprojx
+[Is keil v4] 0
+[target name] chassis
+[final target name] chassis
+
+[Device] STM32F105RC
+[Target name] 
+[Output name] chassis
+[Output path] chassis\
+[Listing path] .\chassis\
+[Is has pack] 1
+[Is enbale LTO] 0
+[Is has user library] 1
+[Is custom scatter file] 0
+
+[chassis.uvprojx]  [chassis]  [STM32F105RC]
+ 
+[memory info]
+[name] IRAM [base addr] 0x20000000 [size] 0x00010000 [type] 1 [off-chip] 0 [is pack] 1 [ID] 2 
+[name] IROM [base addr] 0x08000000 [size] 0x00040000 [type] 2 [off-chip] 0 [is pack] 1 [ID] 3 
+
+
+[map file path] D:\Engineer-master\chassis\MDK-ARM\chassis\chassis.map
+
+[region info]
+[load region] LR_IROM1
+	[execution region] ER_IROM1, 0x08000000, 0x00040000, 0x0000BD5C [memory type] 2 [memory ID] 3
+
+	[execution region] RW_IRAM1, 0x20000000, 0x00010000, 0x00002E40 [memory type] 1 [memory ID] 2
+		[ZI block] addr: 0x20000018, size: 0x00002E28 (11816)
+
+
+[object name max length] 28
+[object path max length] 71
+
+[object in map file]
+[object name] alg_pid.o                     [path] ..\User\Middleware\Algorithm\alg_pid.cpp
+[object name] alg_slope.o                   [path] ..\User\Middleware\Algorithm\alg_slope.cpp
+[object name] buzzer.o                      [path] ..\User\App\buzzer.c
+[object name] buzzer_bsp.o                  [path] ..\User\Bsp\buzzer_bsp.c
+[object name] can.o                         [path] ../Core/Src/can.c
+[object name] chassis_task.o                [path] ..\User\Task\chassis_task.cpp
+[object name] cmsis_os.o                    [path] ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c
+[object name] dma.o                         [path] ../Core/Src/dma.c
+[object name] drv_can.o                     [path] ..\User\Middleware\Driver\drv_can.c
+[object name] drv_math.o                    [path] ..\User\Middleware\Driver\drv_math.cpp
+[object name] drv_uart.o                    [path] ..\User\Middleware\Driver\drv_uart.c
+[object name] dvc_djimotor.o                [path] ..\User\Device\dvc_djimotor.cpp
+[object name] dvc_referee.o                 [path] ..\User\Device\dvc_referee.cpp
+[object name] freertos.o                    [path] ../Core/Src/freertos.c
+[object name] gpio.o                        [path] ../Core/Src/gpio.c
+[object name] heap_4.o                      [path] ../Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c
+[object name] list.o                        [path] ../Middlewares/Third_Party/FreeRTOS/Source/list.c
+[object name] main.o                        [path] ../Core/Src/main.c
+[object name] port.o                        [path] ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3/port.c
+[object name] robotarm_communication.o      [path] ..\User\Task\Robotarm_Communication.cpp
+[object name] startup_stm32f105xc.o         [path] startup_stm32f105xc.s
+[object name] stm32f1xx_hal.o               [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c
+[object name] stm32f1xx_hal_can.o           [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_can.c
+[object name] stm32f1xx_hal_cortex.o        [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c
+[object name] stm32f1xx_hal_dma.o           [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c
+[object name] stm32f1xx_hal_gpio.o          [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c
+[object name] stm32f1xx_hal_msp.o           [path] ../Core/Src/stm32f1xx_hal_msp.c
+[object name] stm32f1xx_hal_rcc.o           [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc.c
+[object name] stm32f1xx_hal_tim.o           [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c
+[object name] stm32f1xx_hal_tim_ex.o        [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c
+[object name] stm32f1xx_hal_timebase_tim.o  [path] ../Core/Src/stm32f1xx_hal_timebase_tim.c
+[object name] stm32f1xx_hal_uart.o          [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c
+[object name] stm32f1xx_it.o                [path] ../Core/Src/stm32f1xx_it.c
+[object name] system_stm32f1xx.o            [path] ../Core/Src/system_stm32f1xx.c
+[object name] tasks.o                       [path] ../Middlewares/Third_Party/FreeRTOS/Source/tasks.c
+[object name] tim.o                         [path] ../Core/Src/tim.c
+[object name] tsk_config_and_callback.o     [path] ..\User\Task\tsk_config_and_callback.cpp
+[object name] usart.o                       [path] ../Core/Src/usart.c
+
+[file path in keil project]
+[old name] startup_stm32f105xc.s         [type] 1   [path] startup_stm32f105xc.s
+[old name] main.c                        [type] 1   [path] ../Core/Src/main.c
+[old name] gpio.c                        [type] 1   [path] ../Core/Src/gpio.c
+[old name] freertos.c                    [type] 1   [path] ../Core/Src/freertos.c
+[old name] can.c                         [type] 1   [path] ../Core/Src/can.c
+[old name] dma.c                         [type] 1   [path] ../Core/Src/dma.c
+[old name] tim.c                         [type] 1   [path] ../Core/Src/tim.c
+[old name] usart.c                       [type] 1   [path] ../Core/Src/usart.c
+[old name] stm32f1xx_it.c                [type] 1   [path] ../Core/Src/stm32f1xx_it.c
+[old name] stm32f1xx_hal_msp.c           [type] 1   [path] ../Core/Src/stm32f1xx_hal_msp.c
+[old name] stm32f1xx_hal_timebase_tim.c  [type] 1   [path] ../Core/Src/stm32f1xx_hal_timebase_tim.c
+[old name] stm32f1xx_hal_gpio_ex.c       [type] 1   [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c
+[old name] stm32f1xx_hal_can.c           [type] 1   [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_can.c
+[old name] stm32f1xx_hal.c               [type] 1   [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c
+[old name] stm32f1xx_hal_rcc.c           [type] 1   [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc.c
+[old name] stm32f1xx_hal_rcc_ex.c        [type] 1   [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c
+[old name] stm32f1xx_hal_gpio.c          [type] 1   [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c
+[old name] stm32f1xx_hal_dma.c           [type] 1   [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c
+[old name] stm32f1xx_hal_cortex.c        [type] 1   [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c
+[old name] stm32f1xx_hal_pwr.c           [type] 1   [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c
+[old name] stm32f1xx_hal_flash.c         [type] 1   [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c
+[old name] stm32f1xx_hal_flash_ex.c      [type] 1   [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c
+[old name] stm32f1xx_hal_exti.c          [type] 1   [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c
+[old name] stm32f1xx_hal_tim.c           [type] 1   [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c
+[old name] stm32f1xx_hal_tim_ex.c        [type] 1   [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c
+[old name] stm32f1xx_hal_uart.c          [type] 1   [path] ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c
+[old name] system_stm32f1xx.c            [type] 1   [path] ../Core/Src/system_stm32f1xx.c
+[old name] drv_can.c                     [type] 1   [path] ..\User\Middleware\Driver\drv_can.c
+[old name] drv_uart.c                    [type] 1   [path] ..\User\Middleware\Driver\drv_uart.c
+[old name] drv_math.cpp                  [type] 1   [path] ..\User\Middleware\Driver\drv_math.cpp
+[old name] alg_filter.cpp                [type] 1   [path] ..\User\Middleware\Algorithm\alg_filter.cpp
+[old name] alg_fsm.cpp                   [type] 1   [path] ..\User\Middleware\Algorithm\alg_fsm.cpp
+[old name] alg_pid.cpp                   [type] 1   [path] ..\User\Middleware\Algorithm\alg_pid.cpp
+[old name] alg_slope.cpp                 [type] 1   [path] ..\User\Middleware\Algorithm\alg_slope.cpp
+[old name] dvc_djimotor.cpp              [type] 1   [path] ..\User\Device\dvc_djimotor.cpp
+[old name] dvc_referee.cpp               [type] 1   [path] ..\User\Device\dvc_referee.cpp
+[old name] chassis_task.cpp              [type] 1   [path] ..\User\Task\chassis_task.cpp
+[old name] Robotarm_Communication.cpp    [type] 1   [path] ..\User\Task\Robotarm_Communication.cpp
+[old name] tsk_config_and_callback.cpp   [type] 1   [path] ..\User\Task\tsk_config_and_callback.cpp
+[old name] buzzer.c                      [type] 1   [path] ..\User\App\buzzer.c
+[old name] buzzer_bsp.c                  [type] 1   [path] ..\User\Bsp\buzzer_bsp.c
+[old name] croutine.c                    [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/croutine.c
+[old name] event_groups.c                [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/event_groups.c
+[old name] list.c                        [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/list.c
+[old name] queue.c                       [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/queue.c
+[old name] stream_buffer.c               [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c
+[old name] tasks.c                       [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/tasks.c
+[old name] timers.c                      [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/timers.c
+[old name] cmsis_os.c                    [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c
+[old name] heap_4.c                      [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c
+[old name] port.c                        [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3/port.c
+[old name] arm_cortexM3l_math.lib        [type] 3   [path] ../Middlewares/ST/ARM/DSP/Lib/arm_cortexM3l_math.lib
+
+[record region info]
+[load region] LR_IROM1
+	[execution region] ER_IROM1, 0x08000000, 0x00040000, 0x0000BD5C [type] 2 [ID] 3
+	[execution region] RW_IRAM1, 0x20000000, 0x00010000, 0x00002E40 [type] 1 [ID] 2
+-----------------------------------------------------------------------------------------------------------------------------------
+                                   FILE(s)                                  |         RAM (byte)       |       FLASH (byte)       |
+-----------------------------------------------------------------------------------------------------------------------------------
+..\User\Middleware\Algorithm\alg_pid.cpp():                                 |           0              |         782              |
+..\User\Middleware\Algorithm\alg_slope.cpp():                               |           0              |         482              |
+..\User\App\buzzer.c():                                                     |          36              |        1746              |
+..\User\Bsp\buzzer_bsp.c():                                                 |           0              |         132              |
+../Core/Src/can.c():                                                        |          84              |         642              |
+..\User\Task\chassis_task.cpp():                                            |        1836              |        2984              |
+../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c():         |           0              |         262              |
+../Core/Src/dma.c():                                                        |           0              |          78              |
+..\User\Middleware\Driver\drv_can.c():                                      |         136              |         784              |
+..\User\Middleware\Driver\drv_math.cpp():                                   |           0              |         170              |
+..\User\Middleware\Driver\drv_uart.c():                                     |        2620              |         632              |
+..\User\Device\dvc_djimotor.cpp():                                          |           0              |        1346              |
+..\User\Device\dvc_referee.cpp():                                           |           1              |        2658              |
+../Core/Src/freertos.c():                                                   |         608              |         374              |
+../Core/Src/gpio.c():                                                       |           0              |         126              |
+../Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c():     |        4120              |        1056              |
+../Middlewares/Third_Party/FreeRTOS/Source/list.c():                        |           0              |         296              |
+../Core/Src/main.c():                                                       |           0              |         232              |
+../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3/port.c():  |           9              |         814              |
+..\User\Task\Robotarm_Communication.cpp():                                  |           0              |         178              |
+startup_stm32f105xc.s():                                                    |        1536              |         400              |
+../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c():                      |           9              |          81              |
+../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_can.c():                  |           0              |        3170              |
+../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c():               |           0              |         384              |
+../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c():                  |           0              |        3110              |
+../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c():                 |           0              |         798              |
+../Core/Src/stm32f1xx_hal_msp.c():                                          |           0              |         114              |
+../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc.c():                  |           0              |        3202              |
+../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c():                  |           0              |        3212              |
+../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c():               |           0              |         254              |
+../Core/Src/stm32f1xx_hal_timebase_tim.c():                                 |          72              |         240              |
+../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c():                 |           0              |        3484              |
+../Core/Src/stm32f1xx_it.c():                                               |           0              |         166              |
+../Core/Src/system_stm32f1xx.c():                                           |           4              |          30              |
+../Middlewares/Third_Party/FreeRTOS/Source/tasks.c():                       |         300              |        2951              |
+../Core/Src/tim.c():                                                        |          72              |         354              |
+..\User\Task\tsk_config_and_callback.cpp():                                 |           8              |         600              |
+../Core/Src/usart.c():                                                      |         280              |         658              |
+-----------------------------------------------------------------------------------------------------------------------------------
+[memory print mode]: 0
+LR_IROM1
+        RAM 1             [0x20000000 | 0x00010000 (65536)]
+                [zi start] 1   [zi end] 9
+                RW_IRAM1  [0x20000000]|#OOOOOOOO_________________________________________| (  11.5 KB /  64.0 KB )  18.1%  
+ 
+        FLASH 1           [0x08000000 | 0x00040000 (262144)]
+                ER_IROM1  [0x08000000]|#########_________________________________________| (  47.3 KB / 256.0 KB )  18.5%  
+ 
+[htm file path] D:\Engineer-master\chassis\MDK-ARM\chassis\chassis.htm
+Maximum Stack Usage =        380 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)
+ 
+=============================================================================================================================
+
+run time: 0.146 s

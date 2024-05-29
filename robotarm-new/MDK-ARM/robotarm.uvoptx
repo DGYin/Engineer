@@ -185,6 +185,26 @@
           <WinNumber>1</WinNumber>
           <ItemText>akMotor_joint2</ItemText>
         </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>m3508_joint1</ItemText>
+        </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>m3508_joint5</ItemText>
+        </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Chassis_Move</ItemText>
+        </Ww>
+        <Ww>
+          <count>8</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>pathfinder</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>

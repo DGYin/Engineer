@@ -684,24 +684,24 @@ void Class_DJI_Motor_C620::Task_PID_PeriodElapsedCallback()
 void DjiMotor_Init(void)
 {
 	// 关节1 电机初始化
-	m3508_joint1.PID_Angle.Init(45.f, 15.f, 0.01f, 0.0f, 3.0f * PI, 3.0f * PI);
+	m3508_joint1.PID_Angle.Init(45.f, 15.f, 0.0f, 0.0f, 1.5f * PI, 5.0f * PI);
 	//m3508_joint1.PID_Omega.SetCompensation(1000);
-	m3508_joint1.PID_Omega.Init(2700.0f, 2000.f, 0.0000f, 0, 10000, 16384);
+	m3508_joint1.PID_Omega.Init(2700.0f, 2000.f, 0.0000f, 0, 10000, 15000);
 	m3508_joint1.Init(&hcan1, DJI_Motor_ID_0x201);
 	m3508_joint1.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_ANGLE);
-	m3508_joint1.PID_Omega.Set_Out_Max(16384);
+	m3508_joint1.PID_Omega.Set_Out_Max(15000);
 	// 关节5 电机初始化
-	m3508_joint5.PID_Angle.Init(3.f, 1.0f, 0.01f, 0.0f, 2.0f * PI, 5.0f * PI);
-	m3508_joint5.PID_Omega.Init(3500.0f, 4000.0f, 0.0000f, 0, 5000, 10000);
+	m3508_joint5.PID_Angle.Init(30.f, 0.0f, 0.01f, 0.0f, 2.0f * PI, 4.0f * PI);
+	m3508_joint5.PID_Omega.Init(2000.0f, 3000.0f, 0.0000f, 0, 5000, 10000);
 	m3508_joint5.Init(&hcan1, DJI_Motor_ID_0x202);
 	m3508_joint5.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_ANGLE);
-	m3508_joint5.PID_Omega.Set_Out_Max(16384);
+	m3508_joint5.PID_Omega.Set_Out_Max(10000);
 	// 关节6 电机初始化
-	m2006_joint6.PID_Angle.Init(3.f, 1.0f, 0.00f, 0.0f, 4.0f * PI, 10.0f * PI);
-	m2006_joint6.PID_Omega.Init(3000.0f, 2000.0f, 0.0000f, 0, 4000, 9000);
+	m2006_joint6.PID_Angle.Init(20.f, 1.0f, 0.00f, 0.0f, 3.0f * PI, 3.0f * PI);
+	m2006_joint6.PID_Omega.Init(1200.0f, 3000.0f, 0.0000f, 0, 4000, 9000);
 	m2006_joint6.Init(&hcan1, DJI_Motor_ID_0x203, DJI_Motor_Control_Method_ANGLE, 36.f);
 	m2006_joint6.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_ANGLE);
-	m2006_joint6.PID_Omega.Set_Out_Max(9000);
+	m2006_joint6.PID_Omega.Set_Out_Max(8000);
 }
 
 

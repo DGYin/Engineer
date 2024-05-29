@@ -151,11 +151,12 @@ void AK_motor_Init(void)
 	init_struct.polor_num			= 21; // 相数和减速比由电机机械结构决定，需查询电机手册
 	init_struct.CANID				= 0x14;
 	init_struct.torque_coefficient	= 0.091; // 转矩系数需查询电机手册
-	init_struct.peripheral_handle	= &hcan1;
+	init_struct.peripheral_handle	= &hcan2;
 	init_struct.callbackMode		= AK_MOTOR_AUTO_CALLBACK_MODE;
 	init_struct.callbackPeriodMs	= 10; // 回传模式和回传周期需要由上位机设定
 	AK_motor_HandleInit(&akMotor_joint2, init_struct);
 	// 初始化关节2电机
+	init_struct.peripheral_handle	= &hcan1;
 	init_struct.CANID			= 0x12;
 	AK_motor_HandleInit(&akMotor_joint3, init_struct);
 

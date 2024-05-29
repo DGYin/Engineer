@@ -268,6 +268,12 @@ JOINT_CALIBRATED_STATUS_T prismaticJoint_c::jointGetCaliStatus()
 	return caliStatus;
 }
 
+JOINT_RETURN_T prismaticJoint_c::jointSetUncalibrated()
+{
+	caliStatus = JOINT_UNCALIBRATED;
+	return JOINT_OK;
+}
+
 float prismaticJoint_c::GetUpperLimit()
 {
 	return upperMechLimSi - mechLimitMarginSi;
@@ -332,8 +338,8 @@ JOINT_RETURN_T revoluteJoint_c::jointInit(AK_motor_t* AkMotor)
 	JOINT_RETURN_T ret;
 	motor		= AkMotor;
 	motorType	= JOINT_MOTOR_AK;
-	jointOmegaMax	= 0.15f;
-	jointDOmegaMax	= 0.03f;
+	jointOmegaMax	= 0.08f;
+	jointDOmegaMax	= 0.02f;
 	jointCaliInit();	// 校准初始化
 	return ret;
 }
@@ -771,6 +777,12 @@ JOINT_RETURN_T revoluteJoint_c::jointCalibrate(Class_DJI_Motor_C610* djiC610Moto
 JOINT_CALIBRATED_STATUS_T revoluteJoint_c::jointGetCaliStatus()
 {
 	return caliStatus;
+}
+
+JOINT_RETURN_T revoluteJoint_c::jointSetUncalibrated()
+{
+	caliStatus = JOINT_UNCALIBRATED;
+	return JOINT_OK;
 }
 
 JOINT_MOTOR_CONNECTION_STATE_T revoluteJoint_c::jointGetConnectionState()

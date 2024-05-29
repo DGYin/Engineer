@@ -157,13 +157,14 @@ void Class_Chassis::Inverse_Kinematic()
 	}
 }
 
-
+float omegaW;
 void Class_Chassis::Target_Resolution()
 {
 	Struct_Data_ID_0x11 temp_Tx_Data_ID_0x11 = Roboatrm_Communication.Get_Data_ID_0x11();
 	Target_Velocity_X = Math_Int_To_Float(temp_Tx_Data_ID_0x11.Chassis_Vx, 0, ((1 << 16) - 1), -1.0f, 1.0f);
 	Target_Velocity_Y = Math_Int_To_Float(temp_Tx_Data_ID_0x11.Chassis_Vy, 0, ((1 << 16) - 1), -1.0f, 1.0f);
 	Target_Omega = -Math_Int_To_Float(temp_Tx_Data_ID_0x11.Chassis_Wz, 0, ((1 << 16) - 1), -1.0f, 1.0f);
+	omegaW = Target_Omega;
 	Robotarm_Height = Math_Int_To_Float(temp_Tx_Data_ID_0x11.Robotarm_Pz, 0, ((1 << 16) - 1), 0, 1160.0f);
 	
 	//斜坡函数计算用于速度解算初始值获取
@@ -255,8 +256,21 @@ uint16_t y03 = 280;
 uint16_t y04 = 230;
 void Class_Chassis::UI_Task()
 {
-	Referee.Interaction_Graphic_7.Sender = Referee_Data_Robots_ID_RED_INFANTRY_3;
-	Referee.Interaction_Graphic_7.Receiver = Referee_Data_Robots_Client_ID_RED_INFANTRY_3;
+	// 获取自身 ID ，确定发送接收
+	Enum_Referee_Data_Robots_ID myId = Referee.Get_ID();
+	switch(myId)
+	{
+		case Referee_Data_Robots_ID_RED_ENGINEER_2:
+			Referee.Interaction_Graphic_7.Sender = Referee_Data_Robots_ID_RED_ENGINEER_2;
+			Referee.Interaction_Graphic_7.Receiver = Referee_Data_Robots_Client_ID_RED_ENGINEER_2;
+			break;
+		case Referee_Data_Robots_ID_BLUE_ENGINEER_2:
+			Referee.Interaction_Graphic_7.Sender = Referee_Data_Robots_ID_BLUE_ENGINEER_2;
+			Referee.Interaction_Graphic_7.Receiver = Referee_Data_Robots_Client_ID_BLUE_ENGINEER_2;
+			break;
+		default:
+			break;
+	}
 	Referee.UI_Draw_Line(&Referee.Interaction_Graphic_7.Graphic_1, (char*)"001", Graphic_Operation_ADD, 0, Graphic_Color_GREEN, 1,  840,   y01,  920,   y01); //µÚÒ»ÐÐ×óºáÏß
 	Referee.UI_Draw_Line(&Referee.Interaction_Graphic_7.Graphic_2, (char*)"002", Graphic_Operation_ADD, 0, Graphic_Color_GREEN, 1,  950,   y01,  970,   y01); //µÚÒ»ÐÐÊ®×Öºá
 	Referee.UI_Draw_Line(&Referee.Interaction_Graphic_7.Graphic_3, (char*)"003", Graphic_Operation_ADD, 0, Graphic_Color_GREEN, 1, 1000,   y01, 1080,   y01); //µÚÒ»ÐÐÓÒºáÏß

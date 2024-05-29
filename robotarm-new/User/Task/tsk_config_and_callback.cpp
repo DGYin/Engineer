@@ -159,10 +159,7 @@ void Device_CAN1_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
 			DM_motor_feedback_handler(&dmMotor_joint4, CAN_RxMessage->Data[0] & 0x0F, CAN_RxMessage->Data);
 		}
 		break;
-		case (0x14):
-		{
-			AK_motor_feedback_handler(&akMotor_joint2, CAN_RxMessage->Header.ExtId, CAN_RxMessage->Data);
-		}
+		
 		break;
 		case (0x12):
 		{
@@ -246,7 +243,10 @@ void Device_CAN2_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
     {
     }
     break;
-	
+	case (0x14):
+		{
+			AK_motor_feedback_handler(&akMotor_joint2, CAN_RxMessage->Header.ExtId, CAN_RxMessage->Data);
+		}
     }
 }
 
@@ -268,17 +268,19 @@ void RobotarmResolution_Task(void const * argument)
 		robotarm.Robotarm_GetQMat(jointQNow);						// 获取当前Q矩阵
 		robotarm.Robotarm_FKine();									// 获得当前末端位姿 （rpy型）
 		
-//		pathfinder.Pathfinder_SetTask(PATHFINDER_SILVER_ORE_PICK_PRIORITY);	// 设置当前任务
-//		pathfinder.Pathfinder_CheckReady(jointQNow);						// 检查是否准备好
-//		pathfinder.Pathfinder_TaskScheduler();								// 进行一次调度
-//		qMatrix_t jointQTarget;
-//		pathfinder.Pathfinder_GetQMat(jointQTarget);						// 获取目标Q矩阵
-//		robotarm.Robotarm_SetQMatTarget(jointQTarget);
-		
+		//pathfinder.Pathfinder_SetTask(PATHFINDER_FREE_PRIORITY);	// 设置当前任务
+		pathfinder.Pathfinder_CheckReady(jointQNow);						// 检查是否准备好
+		pathfinder.Pathfinder_TaskScheduler();								// 进行一次调度
+		qMatrix_t jointQTarget;
+		if (pathfinder.Pathfinder_GetQMat(jointQTarget) == PATHFINDER_OK)	// 有寻路任务，获取目标Q矩阵
+			robotarm.Robotarm_SetQMatTarget(jointQTarget);
+		else	// 否则逆运动学
+		{
 //		robotarm.Robotarm_SetEndPosNRpyTarget(endPosNRpyTarget);	// 设置末端位姿 （rpy型）
-		robotarm.Robotarm_IKineGeo();
-		robotarm.Robotarm_FKine();									// 获得当前末端位姿 （rpy型）
-////		
+			robotarm.Robotarm_IKineGeo();
+			robotarm.Robotarm_FKine();									// 获得当前末端位姿 （rpy型）
+		}
+			////		
 //		robotarm.Robotarm_GetEndPosNRpyNow(endPosNRpyNow);		
 //		qMatrix_t qNow;
 //		robotarm.Robotarm_GetQMat(qNow);
@@ -329,7 +331,7 @@ void Motor_Task(void const * argument)
 		// 看看任务中最少还剩多少 stack 内存，方便调整大小
 		extern osThreadId MotorTaskHandle;
 		UBaseType_t remaining = uxTaskGetStackHighWaterMark(MotorTaskHandle);
-		osDelay(5);
+		osDelay(8);
 	}
 }
 
@@ -365,6 +367,12 @@ void Communication_Task(void const * argument)
 	
 	while(1)
 	{
+		if (robotarm.DR16.Get_DR16_Status() == DR16_Status_DISABLE)
+		{
+			robotarm.Chassis_Move.Chassis_Vx = 0;
+			robotarm.Chassis_Move.Chassis_Vy = 0;
+			robotarm.Chassis_Move.Chassis_Wz = 0;
+		}
 		robotarm.Task_Chassis_Communication_PeriodElapsedCallback();
 		osDelay(2);
 	}
@@ -389,7 +397,7 @@ void init()
 	Vofa_InitExample(&vofa);
 	// 初始化机械臂
 	robotarm.Robotarm_Init();
-	//pathfinder.Pathfinder_Init();
+	pathfinder.Pathfinder_Init();
 	// 初始化蜂鸣器
 	buzzer_init_example();
 	buzzer_setTask(&buzzer, BUZZER_DJI_STARTUP_PRIORITY);

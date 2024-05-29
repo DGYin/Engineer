@@ -1,6 +1,8 @@
 #include "robotarm.hpp"
 #include "buzzer.h"
 #include "dvc_pump.h"
+#include "pathfinder.hpp"
+
 robotarm_c robotarm;
 
 inline float Robotarm_platformSine(float input);
@@ -18,12 +20,13 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_Init()
 	revJoint5.jointInit(&m3508_joint5);
 	revJoint6.jointInit(&m2006_joint6);
 	// 限位初始化
-	priJoint1.jointSetMechLimit(0.f, 0.285);
+	priJoint1.jointSetMechLimit(0.005f, 0.285);
 	revJoint2.jointSetMechLimit(90.00*DEGREE_TO_RAD,	91.22f*DEGREE_TO_RAD);
 	revJoint3.jointSetMechLimit(179.85f*DEGREE_TO_RAD,	135.00f*DEGREE_TO_RAD);
 	revJoint4.jointSetMechLimit(109.88f*DEGREE_TO_RAD,	109.88f*DEGREE_TO_RAD);
 	revJoint5.jointSetMechLimit(90.00*DEGREE_TO_RAD,	90.00*DEGREE_TO_RAD);
-	revJoint6.jointSetMechLimit(95.0*DEGREE_TO_RAD,		0.0f*DEGREE_TO_RAD);
+//	revJoint6.jointSetMechLimit(95.0*DEGREE_TO_RAD,		0.0f*DEGREE_TO_RAD);
+	revJoint6.jointSetMechLimit(1.7,		0.2);
 	// 缓动初始化
 	AlgSmoothen_UsHanldeInitExample(&dPosSmoothen, UNIFORM_SMOOTHEN_TYPE_RELATIVE);
 	AlgSmoothen_SetUsDelta(&dPosSmoothen, dPosMax, dPosMax);
@@ -61,12 +64,12 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_DoJointControl()
 	ROBOTARM_RETURN_T ret = ROBOTARM_OK;
 	if (armCalibrated == ROBOTARM_CALIBRATED)	// 完成校准后，关节才受这里的控制
 	{
-//		priJoint1.setBodyFrameJointDisplacement(jointQTarget[1-1]);
-//		revJoint2.setBodyFrameJointAngle(jointQTarget[2-1]);
-//		revJoint3.setBodyFrameJointAngle(jointQTarget[3-1]);
-//		revJoint4.setBodyFrameJointAngle(jointQTarget[4-1]);
-//		revJoint5.setBodyFrameJointAngle(jointQTarget[5-1]);	
-//		revJoint6.setBodyFrameJointAngle(jointQTarget[6-1]);
+		priJoint1.setBodyFrameJointDisplacement(jointQTarget[1-1]);
+		revJoint2.setBodyFrameJointAngle(jointQTarget[2-1]);
+		revJoint3.setBodyFrameJointAngle(jointQTarget[3-1]);
+		revJoint4.setBodyFrameJointAngle(jointQTarget[4-1]);
+		revJoint5.setBodyFrameJointAngle(jointQTarget[5-1]);	
+		revJoint6.setBodyFrameJointAngle(jointQTarget[6-1]);
 //		revJoint6.setBodyFrameJointAngle(targetAngle);
 		for (int i=0; i<6; i++)
 			qTar[i] = jointQTarget[i];
@@ -435,19 +438,19 @@ ROBOTARM_RETURN_T robotarm_c::Robotarm_CheckforCalibration()
 		calibratedFinished = 0;
 		buzzer_setTask(&buzzer, BUZZER_CALIBRATING_PRIORITY);
 		// 尝试执行校准
-//		priJoint1.jointDoCalibrate(JOINT_CALI_DIRECTION_BACKWARD);
+		priJoint1.jointDoCalibrate(JOINT_CALI_DIRECTION_BACKWARD);
 		revJoint2.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
-//		revJoint3.jointDoCalibrate(JOINT_CALI_DIRECTION_CW);
-//		revJoint4.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
-//		revJoint5.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
-//		revJoint6.jointDoCalibrate(JOINT_CALI_DIRECTION_CW);
+		revJoint3.jointDoCalibrate(JOINT_CALI_DIRECTION_CW);
+		revJoint4.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
+		revJoint5.jointDoCalibrate(JOINT_CALI_DIRECTION_CCW);
+		revJoint6.jointDoCalibrate(JOINT_CALI_DIRECTION_CW);
 		// 获取校准状态
-//		caliStatus &= priJoint1.jointGetCaliStatus();
+		caliStatus &= priJoint1.jointGetCaliStatus();
 		caliStatus &= revJoint2.jointGetCaliStatus();
-//		caliStatus &= revJoint3.jointGetCaliStatus();
-//		caliStatus &= revJoint4.jointGetCaliStatus();
-//		caliStatus &= revJoint5.jointGetCaliStatus();
-//		caliStatus &= revJoint6.jointGetCaliStatus();
+		caliStatus &= revJoint3.jointGetCaliStatus();
+		caliStatus &= revJoint4.jointGetCaliStatus();
+		caliStatus &= revJoint5.jointGetCaliStatus();
+		caliStatus &= revJoint6.jointGetCaliStatus();
 		
 		armCalibrated = (ROBOTARM_CALIBRATE_STATUS_T) caliStatus;
 	}
@@ -484,7 +487,7 @@ void robotarm_c::Task_Chassis_Communication_PeriodElapsedCallback()
  * @brief 遥控器控制任务
  *
  */
-
+float omegaW;
 Enum_DR16_Switch_Status lastRightSwitch; 
 void robotarm_c::Task_Control_Robotarm()
 {
@@ -495,8 +498,16 @@ void robotarm_c::Task_Control_Robotarm()
 	static Position_Orientation_t Last_Position_Orientation = posNPyrTarget;
 	static Chassis_Move_t Last_Chassis_Move = Chassis_Move;
 	
+	// 默认为0
+	Chassis_Move.Chassis_Vy = 0.f;
+	Chassis_Move.Chassis_Vx = 0.f;
+	Chassis_Move.Chassis_Wz = 0.f;
+	float slowerCoef = 1.f;
+	
+	
 	if(DR16.Get_DR16_Status() == DR16_Status_ENABLE)
 	{
+		
 //		extern osSemaphoreId Communication_SemHandle;
 //		osSemaphoreRelease(Communication_SemHandle);
 		float dr16_left_x, dr16_left_y,dr16_right_x,dr16_right_y,dr16_yaw;
@@ -550,8 +561,8 @@ void robotarm_c::Task_Control_Robotarm()
 						HAL_GPIO_WritePin(GPIOI, GPIO_PIN_7, GPIO_PIN_SET);
 						// 标记回到默认位置
 						qTargetMutex = ROBOTARM_MUTEX_OCCUPIED;
-						posNPyrTarget = {326.32, -10.288, 127.45};
-						Last_Correct_Position_Orientation = {326.32, -10.288, 127.45};
+						posNPyrTarget = {200.32, -10.288, 150.45};
+						Last_Correct_Position_Orientation = {200.32, -10.288, 150.45};
 						for (int i=0; i<6; i++)
 							jointQTarget[i] = lDefQ[i];
 					break;
@@ -567,8 +578,8 @@ void robotarm_c::Task_Control_Robotarm()
 					case DR16_Switch_Status_DOWN:
 						// 标记回到默认位置
 						qTargetMutex = ROBOTARM_MUTEX_OCCUPIED;
-						posNPyrTarget = {326.32, -10.288, 127.45};
-						Last_Correct_Position_Orientation = {326.32, -10.288, 127.45};
+						posNPyrTarget = {200.32, -10.288, 150.45};
+						Last_Correct_Position_Orientation = {200.32, -10.288, 150.45};
 						for (int i=0; i<6; i++)
 							jointQTarget[i] = rDefQ[i];
 						HAL_GPIO_WritePin(GPIOI, GPIO_PIN_7, GPIO_PIN_RESET);
@@ -600,6 +611,36 @@ void robotarm_c::Task_Control_Robotarm()
 				
 			break;
 		}
+		// 键鼠
+		if (dr16_right_x==0)
+			Chassis_Move.Chassis_Wz = DR16.Get_Mouse_X()*100.f;
+		if (Chassis_Move.Chassis_Wz >1) Chassis_Move.Chassis_Wz=1;
+		if (Chassis_Move.Chassis_Wz<-1) Chassis_Move.Chassis_Wz=-1;
+		omegaW = Chassis_Move.Chassis_Wz;
+		if (DR16.Get_Keyboard_Key_Shift() == DR16_Key_Status_PRESSED)
+			slowerCoef = 0.05;
+		
+		if (DR16.Get_Keyboard_Key_W() == DR16_Key_Status_PRESSED)
+			Chassis_Move.Chassis_Vy = 0.3*slowerCoef;
+		if (DR16.Get_Keyboard_Key_S() == DR16_Key_Status_PRESSED)
+			Chassis_Move.Chassis_Vy = -0.3*slowerCoef;
+		if (DR16.Get_Keyboard_Key_A() == DR16_Key_Status_PRESSED)
+			Chassis_Move.Chassis_Vx = -0.3*slowerCoef;
+		if (DR16.Get_Keyboard_Key_D() == DR16_Key_Status_PRESSED)
+			Chassis_Move.Chassis_Vx = 0.3*slowerCoef;
+		if (DR16.Get_Keyboard_Key_C() == DR16_Key_Status_PRESSED)
+		{
+			armCalibrated = ROBOTARM_UNCALIBRATED;
+			priJoint1.jointSetUncalibrated();
+			revJoint2.jointSetUncalibrated();
+			revJoint3.jointSetUncalibrated();
+			revJoint4.jointSetUncalibrated();
+			revJoint5.jointSetUncalibrated();
+			revJoint6.jointSetUncalibrated();
+		}
+		// 一键兑矿
+		if (DR16.Get_Keyboard_Key_B() == DR16_Key_Status_PRESSED)
+			pathfinder.Pathfinder_SetTask(PATHFINDER_SILVER_ORE_PICK_PRIORITY);	// 设置当前任务
 	}
 	
 	

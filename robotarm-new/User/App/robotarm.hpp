@@ -206,6 +206,11 @@ class robotarm_c{
 		void Task_Control_Robotarm();
 		// 金妈的裁判系统
 		Class_Referee Referee;
+		// 金妈双板通讯的成员
+		//底盘移动结构体
+		Chassis_Move_t Chassis_Move;
+		Struct_Custom_Communication_Data Custom_Communication_Data;
+		Position_Orientation_t Last_Correct_Position_Orientation;
 	private:
 		// 末端相关
 		robotarm_Pose_t	endTargetPosNPose_b;	// b 代表 Body Frame，机体坐标系，符合右手定则
@@ -228,14 +233,9 @@ class robotarm_c{
 		algSmoothen_uniformSmoothen_t dRotSmoothen;
 		// 金妈逆解算的成员
 		float Joint_World_Angle[5] = {0.0f};	//Joint坐标系角度
-		Position_Orientation_t posNPyrTarget = {326.32, -10.288, 127.45};
+		Position_Orientation_t posNPyrTarget = {200.32, -10.288, 150.45};
 		float targetHeight = 0;
 		//Position_Orientation_t Last_Correct_Position_Orientation= {326.32, -10.288, 127.45};
-		// 金妈双板通讯的成员
-		//底盘移动结构体
-		Chassis_Move_t Chassis_Move;
-		Struct_Custom_Communication_Data Custom_Communication_Data;
-		Position_Orientation_t Last_Correct_Position_Orientation;
 };
 
 

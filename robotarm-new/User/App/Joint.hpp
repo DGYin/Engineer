@@ -61,6 +61,7 @@ class prismaticJoint_c{	// 关节的所有位移都为 m
 		
 		JOINT_RETURN_T jointDoCalibrate(JOINT_PRISMATIC_CALI_DIRECTION_T __caliDir=JOINT_CALI_DIRECTION_BACKWARD);
 		JOINT_CALIBRATED_STATUS_T jointGetCaliStatus();	// 获取是否完成校准
+		JOINT_RETURN_T jointSetUncalibrated();
 		// 设置关节位移
 		JOINT_RETURN_T setBodyFrameJointDisplacement(float targetDisp);
 		// 获得关节角度
@@ -114,6 +115,7 @@ class revoluteJoint_c{	// 关节的所有角度都为弧度
 		
 		JOINT_RETURN_T jointDoCalibrate(JOINT_REVOLUTE_CALIBRATION_DIRECTION_T __caliDir=JOINT_CALI_DIRECTION_CCW);
 		JOINT_CALIBRATED_STATUS_T jointGetCaliStatus();	// 获取是否完成校准
+		JOINT_RETURN_T jointSetUncalibrated();
 		// 设置关节角度
 		float jointOmegaMax;
 		float jointDOmegaMax;
@@ -140,7 +142,7 @@ class revoluteJoint_c{	// 关节的所有角度都为弧度
 		// 进行关节校准相关
 		JOINT_RETURN_T jointCaliInit(	float omege=1.2f,
 										float delPos=0.1f,
-										uint8_t afLength=40,
+										uint8_t afLength=50,
 										float tole=0.012f,
 										JOINT_REVOLUTE_CALIBRATION_DIRECTION_T __caliDir=JOINT_CALI_DIRECTION_CCW);
 		float calibratedPositionRad;	// 完成校准后输出的角度
